@@ -12,6 +12,55 @@
 
 #include "fractol.h"
 
+/*
+ca & cb: Keep the original value for c, because of z^2 + c, meaning c
+always has the same value
+*/
+int	ft_mandelbrot(int a, int b)
+{
+	int n;
+	int max_iter;
+	int	ca;
+	int cb;
+	int aa;
+	int bb;
+
+	ca = a;
+	cb = b;
+
+	max_iter = 100;
+	
+	while (n < 100)
+	{
+		aa = a * a - b * b;
+		bb = 2 * a * b;
+		a = aa + ca;
+		b = bb + cb;
+		if (abs(a + b) > 16) //!random limit
+			break;
+		n ++;
+	}
+
+}
+
+int	main(int ac, char **av)
+{
+	int	a;
+	int	b;
+
+	//! if ungleich Julia & Mandelbrot
+	if (av[1] == "Mandelbrot" || av[1] == "mandelbrot")
+	{
+		ft_mandelbrot(a, b);
+	}
+	/* else if (av[1] == "Julia" && set.name || av[1] == "julia")
+	{
+		ft_julia
+	} */
+}
+
+
+/*
 int32_t ft_pixel(int32_t r, int32_t g, int32_t b, int32_t a)
 {
     return (r << 24 | g << 16 | b << 8 | a);
@@ -82,3 +131,4 @@ int32_t main(int32_t argc, const char* argv[])
 	mlx_terminate(mlx);
 	return (EXIT_SUCCESS);
 }
+/*
