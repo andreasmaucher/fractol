@@ -10,125 +10,51 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "fractol.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include <unistd.h>
+#include "MLX42/include/MLX42/MLX42.h"
+#define WIDTH 256
+#define HEIGHT 256
 
-/*
-ca & cb: Keep the original value for c, because of z^2 + c, meaning c
-always has the same value
-*/
-int	ft_mandelbrot(int a, int b)
+// Exit the program as failure.
+static void ft_error(void)
 {
-	int n;
-	int max_iter;
-	int	ca;
-	int cb;
-	int aa;
-	int bb;
-
-	ca = a;
-	cb = b;
-
-	max_iter = 100;
-	
-	while (n < 100)
-	{
-		aa = a * a - b * b;
-		bb = 2 * a * b;
-		a = aa + ca;
-		b = bb + cb;
-		if (abs(a + b) > 16) //!random limit
-			break;
-		n ++;
-	}
-
+	fprintf(stderr, "%s", mlx_strerror(mlx_errno));
+	exit(EXIT_FAILURE);
 }
 
-int	main(int ac, char **av)
+// Print the window width and height.
+static void ft_hook(void* param)
 {
-	int	a;
-	int	b;
+	const mlx_t* mlx = param;
 
-	//! if ungleich Julia & Mandelbrot
-	if (av[1] == "Mandelbrot" || av[1] == "mandelbrot")
-	{
-		ft_mandelbrot(a, b);
-	}
-	/* else if (av[1] == "Julia" && set.name || av[1] == "julia")
-	{
-		ft_julia
-	} */
+	printf("WIDTH: %d | HEIGHT: %d\n", mlx->width, mlx->height);
 }
 
-
-/*
-int32_t ft_pixel(int32_t r, int32_t g, int32_t b, int32_t a)
+int32_t	main(void)
 {
-    return (r << 24 | g << 16 | b << 8 | a);
-}
 
-void ft_randomize(void* param)
-{
-	for (int32_t i = 0; i < image->width; ++i)
-	{
-		for (int32_t y = 0; y < image->height; ++y)
-		{
-			uint32_t color = ft_pixel(
-				rand() % 0xFF, // R
-				rand() % 0xFF, // G
-				rand() % 0xFF, // B
-				rand() % 0xFF  // A
-			);
-			mlx_put_pixel(image, i, y, color);
-		}
-	}
-}
+	// MLX allows you to define its core behaviour before startup.
+	mlx_set_setting(MLX_MAXIMIZED, true);
+	mlx_t* mlx = mlx_init(WIDTH, HEIGHT, "42Balls", true);
+	if (!mlx)
+		ft_error();
 
-void ft_hook(void* param)
-{
-	mlx_t* mlx = param;
+	/* Do stuff */
 
-	if (mlx_is_key_down(mlx, MLX_KEY_ESCAPE))
-		mlx_close_window(mlx);
-	if (mlx_is_key_down(mlx, MLX_KEY_UP))
-		image->instances[0].y -= 5;
-	if (mlx_is_key_down(mlx, MLX_KEY_DOWN))
-		image->instances[0].y += 5;
-	if (mlx_is_key_down(mlx, MLX_KEY_LEFT))
-		image->instances[0].x -= 5;
-	if (mlx_is_key_down(mlx, MLX_KEY_RIGHT))
-		image->instances[0].x += 5;
-}
+	// Create and display the image.
+	mlx_image_t* img = mlx_new_image(mlx, 256, 256);
+	if (!img || (mlx_image_to_window(mlx, img, 0, 0) < 0))
+		ft_error();
 
-// -----------------------------------------------------------------------------
+	// Even after the image is being displayed, we can still modify the buffer.
+	mlx_put_pixel(img, 0, 0, 0xFF0000FF);
 
-int32_t main(int32_t argc, const char* argv[])
-{
-	mlx_t* mlx;
-
-	// Gotta error check this stuff
-	if (!(mlx = mlx_init(WIDTH, HEIGHT, "MLX42", true)))
-	{
-		puts(mlx_strerror(mlx_errno));
-		return(EXIT_FAILURE);
-	}
-	if (!(image = mlx_new_image(mlx, 128, 128)))
-	{
-		mlx_close_window(mlx);
-		puts(mlx_strerror(mlx_errno));
-		return(EXIT_FAILURE);
-	}
-	if (mlx_image_to_window(mlx, image, 0, 0) == -1)
-	{
-		mlx_close_window(mlx);
-		puts(mlx_strerror(mlx_errno));
-		return(EXIT_FAILURE);
-	}
-	
-	mlx_loop_hook(mlx, ft_randomize, mlx);
+	// Register a hook and pass mlx as an optional param.
+	// NOTE: Do this before calling mlx_loop!
 	mlx_loop_hook(mlx, ft_hook, mlx);
-
 	mlx_loop(mlx);
 	mlx_terminate(mlx);
 	return (EXIT_SUCCESS);
 }
-/*

@@ -18,8 +18,8 @@
 #include <stdbool.h>
 #include "MLX42/include/MLX42/MLX42.h"
 
-#define WIDTH 512
-#define HEIGHT 512
+#define WIDTH 720
+#define HEIGHT 480
 
 typedef struct s_complex
 {
@@ -40,7 +40,5 @@ typedef struct s_fractol
 
 
 }
-
-static mlx_image_t* image; //!probably needs to be in the file
 
 #endif
