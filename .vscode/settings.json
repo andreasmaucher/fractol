@@ -37,6 +37,7 @@
 "C_Cpp_Runner.showCompilationTime": false,
 "files.associations": {
 	"fractol.h": "c",
-	"mlx42.h": "c"
+	"mlx42.h": "c",
+	"stdlib.h": "c"
 }
 }
