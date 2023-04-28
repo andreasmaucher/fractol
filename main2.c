@@ -15,8 +15,8 @@
 #include <stdbool.h>
 #include "MLX42/include/MLX42/MLX42.h"
 
-#define WIDTH 512
-#define HEIGHT 512
+#define WIDTH 128
+#define HEIGHT 128
 
 static mlx_image_t* image;
 
@@ -31,19 +31,16 @@ int32_t ft_pixel(int32_t r, int32_t g, int32_t b, int32_t a)
 /* ca & cb: Keep the original value for c, because of z^2 + c, meaning c
 always has the same value */
 
-/* int	ft_mandelbrot(int a, int b)
+uint32_t	ft_mandelbrot(int a, int b, int n)
 {
-	int n;
-	int max_iter;
-	int	ca;
-	int cb;
-	int aa;
-	int bb;
+	float	ca;
+	float cb;
+	float aa;
+	float bb;
 
 	ca = a;
 	cb = b;
-
-	max_iter = 100;
+	n = 0;
 	
 	while (n < 100)
 	{
@@ -51,46 +48,46 @@ always has the same value */
 		bb = 2 * a * b;
 		a = aa + ca;
 		b = bb + cb;
-		if (abs(a + b) > 16) //!random limit
+		if (a * a + b * b > 16) //!random limit
 			break;
 		n ++;
 	}
-
+	return (n);
 }
 
-int	main(int ac, char **av)
-{
-	int	a;
-	int	b;
-	int r;
+float map(float value, float inputMin, float inputMax, float outputMin, float outputMax) {
+    // Calculate the input value as a fraction of the input range
+    float inputFraction = (value - inputMin) / (inputMax - inputMin);
 
-	//! if ungleich Julia & Mandelbrot
-	if (av[1] == "Mandelbrot" || av[1] == "mandelbrot")
-	{
-		r = ft_mandelbrot(a, b);
-	}
-} */
+    // Scale the input fraction to the output range and add the output minimum
+    float outputValue = outputMin + (inputFraction * (outputMax - outputMin));
+
+    // Return the mapped value
+    return outputValue;
+}
 
 /*this creates the picture*/
 void ft_randomize(void* param)
 {
     int32_t x = 0;
     int32_t y = 0;
-    
+	uint32_t color;
+	int n; //number of iterations
+
     while (x < image->width)
     {
         y = 0;
         while (y < image->height)
         {
-            uint32_t color = ft_pixel(
-            	0xFF, // R
-                0xFF, // G
-                0xFF, // B
-                0xFF  // A
-            );
-            /*image, x, y, color*/
+			float a = map(x, 0, WIDTH, -2.5, 2.5);
+			float b = map(y, 0, HEIGHT, -2.5, 2.5);
+			n = ft_mandelbrot(a, b, n);
+			if (n == 100)
+            	color = ft_pixel(0xFF, 100, 0xFF, 0xFF);
+			else 
+            	color = ft_pixel(0xFF, 0xFF, 0xFF, 0xFF);
+            /*puts the pixels on the image; image, x, y, color*/
             mlx_put_pixel(image, x, y, color);
-            
             y++;
         }
         x++;
@@ -124,7 +121,7 @@ int32_t main(int32_t argc, const char* argv[])
 		return(EXIT_FAILURE);
 	}
 	/*determines the size of the image*/
-	if (!(image = mlx_new_image(mlx, 128, 128)))
+	if (!(image = mlx_new_image(mlx, WIDTH, HEIGHT)))
 	{
 		mlx_close_window(mlx);
 		puts(mlx_strerror(mlx_errno));
