@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FRACTOL_H
+/* #ifndef FRACTOL_H
 # define FRACTOL_H
 
 #include <stdio.h>
@@ -42,3 +42,4 @@ typedef struct s_fractol
 }
 
 #endif
+ */

@@ -121,3 +121,27 @@ int32_t main(int32_t argc, const char* argv[])
 	return (EXIT_SUCCESS);
 }
 */
+
+uint32_t	ft_mandelbrot(int a, int b, int n)
+{
+	float	ca;
+	float cb;
+	float aa;
+	float bb;
+
+	ca = a;
+	cb = b;
+	n = 0;
+	
+	while (n < 100)
+	{
+		aa = a * a - b * b;
+		bb = 2 * a * b;
+		a = aa + ca;
+		b = bb + cb;
+		if (a * a + b * b > 16) //!random limit
+			break;
+		n ++;
+	}
+	return (n);
+}

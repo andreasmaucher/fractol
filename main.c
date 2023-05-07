@@ -9,13 +9,11 @@
 /*   Updated: 2023/04/24 12:31:53 by amaucher         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
+/*
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
 #include "MLX42/include/MLX42/MLX42.h"
-#define WIDTH 256
-#define HEIGHT 256
 
 // Exit the program as failure.
 static void ft_error(void)
@@ -56,4 +54,4 @@ int32_t	main(void)
 	mlx_loop(mlx);
 	mlx_terminate(mlx);
 	return (EXIT_SUCCESS);
-}
+} */
