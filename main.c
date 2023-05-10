@@ -6,6 +6,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <complex.h>
+#include <math.h>
 #include "MLX42/include/MLX42/MLX42.h"
 
 #define WIDTH 512
@@ -55,6 +57,48 @@ void ft_hook(void* param)
 
 // -----------------------------------------------------------------------------
 
+int mandelbrot(double complex c)
+{
+    int i;
+    double complex z = 0.0;
+
+    for (i = 0; i < 1000; i++)
+    {
+        z = z*z + c;
+        if (cabs(z) > 2.0)
+            return (i);
+    }
+    return (0);
+}
+
+void mandelbrot_algo(void *param)
+{
+	int32_t i;
+	int32_t j;
+	int32_t iter;
+	double x, y;
+    double complex c;
+
+	for (i = 0; i < image->width; i++)
+    {
+        for (j = 0; j < image->height; j++)
+        {
+            x = ((double)i / image->width) * 3.0 - 2.0;
+            y = ((double)j / image->height) * 3.0 - 1.5;
+            c = x + y * I;
+            iter = mandelbrot(c);
+            if (iter > 0)
+            {
+                mlx_put_pixel(image, i, j, iter * 256);
+            }
+            else
+            {
+                mlx_put_pixel(image, i, j, 0);
+            }
+        }
+    }
+}
+
 int32_t main(int32_t argc, const char* argv[])
 {
 	mlx_t* mlx;
@@ -78,7 +122,8 @@ int32_t main(int32_t argc, const char* argv[])
 		return(EXIT_FAILURE);
 	}
 	
-	mlx_loop_hook(mlx, ft_randomize, mlx);
+	//mlx_loop_hook(mlx, ft_randomize, mlx);
+	mlx_loop_hook(mlx, mandelbrot_algo, mlx);
 	mlx_loop_hook(mlx, ft_hook, mlx);
 
 	mlx_loop(mlx);

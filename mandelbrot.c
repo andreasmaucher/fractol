@@ -44,8 +44,24 @@ int main(void)
     double x, y;
     double complex c;
 
-    mlx = mlx_init();
-    win = mlx_new_window(mlx, 800, 800, "Mandelbrot Set");
+    if (!(mlx = mlx_init(WIDTH, HEIGHT, "MLX42", true)))
+	{
+		puts(mlx_strerror(mlx_errno));
+		return(EXIT_FAILURE);
+	}
+	if (!(image = mlx_new_image(mlx, 128, 128)))
+	{
+		mlx_close_window(mlx);
+		puts(mlx_strerror(mlx_errno));
+		return(EXIT_FAILURE);
+	}
+	if (mlx_image_to_window(mlx, image, 0, 0) == -1)
+	{
+		mlx_close_window(mlx);
+		puts(mlx_strerror(mlx_errno));
+		return(EXIT_FAILURE);
+	}
+    //win = mlx_new_window(mlx, 800, 800, "Mandelbrot Set");
 
     for (i = 0; i < 800; i++)
     {
@@ -58,11 +74,11 @@ int main(void)
 
             if (iter > 0)
             {
-                mlx_pixel_put(mlx, win, i, j, iter * 256);
+                mlx_put_pixel(mlx, i, j, iter * 256);
             }
             else
             {
-                mlx_pixel_put(mlx, win, i, j, 0);
+                mlx_put_pixel(mlx, i, j, 0);
             }
         }
     }
