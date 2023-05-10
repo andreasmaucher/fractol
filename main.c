@@ -3,15 +3,7 @@
 // See README in the root project for more information.
 // -----------------------------------------------------------------------------
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <complex.h>
-#include <math.h>
-#include "MLX42/include/MLX42/MLX42.h"
-
-#define WIDTH 512
-#define HEIGHT 512
+#include "fractol.h"
 
 static mlx_image_t* image;
 
@@ -97,6 +89,7 @@ void mandelbrot_algo(void *param)
     int32_t i;
 	int32_t j;
 	int32_t iter;
+	int32_t color;
     double x, y;
 
     for (i = 0; i < image->width; i++)
@@ -108,9 +101,8 @@ void mandelbrot_algo(void *param)
             iter = mandelbrot(x, y);
             if (iter > 0)
             {
-				int32_t color = (iter < 16) ? color_map[iter] : 0x000000;
-				//iter = ft_pixel(iter * 256, iter * 256, iter * 256, iter * 256);
-                mlx_put_pixel(image, i, j, color); //iter * 256
+				color = (iter < 16) ? color_map[iter] : 0x000000;
+                mlx_put_pixel(image, i, j, color);
             }
             else
             {

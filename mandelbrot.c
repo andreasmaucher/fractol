@@ -41,9 +41,8 @@ int main(void)
     void *mlx;
     void *win;
     int i, j, iter;
-    double x, y;
-    double complex c;
-
+   
+   
     if (!(mlx = mlx_init(WIDTH, HEIGHT, "MLX42", true)))
 	{
 		puts(mlx_strerror(mlx_errno));

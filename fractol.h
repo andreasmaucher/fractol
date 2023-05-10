@@ -10,16 +10,21 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-/* #ifndef FRACTOL_H
+#ifndef FRACTOL_H
 # define FRACTOL_H
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include "MLX42/include/MLX42/MLX42.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <complex.h>
+#include <math.h>
 
-#define WIDTH 720
-#define HEIGHT 480
+#define WIDTH 520
+#define HEIGHT 520
 
 typedef struct s_complex
 {
@@ -37,9 +42,6 @@ typedef struct s_fractol
 {
 	char	m;
 	char	s;
-
-
-}
+}			t_fractol;
 
 #endif
- */
