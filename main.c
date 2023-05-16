@@ -182,7 +182,7 @@ int32_t main()
 	mlx_loop_hook(mlx, ft_hook, mlx);
 	//mlx_set_scroll_callback(mlx, scroll_handler, mlx);
 	mlx_scroll_hook(mlx, &my_scrollhook, NULL);
-	mlx_image_to_window(mlx, image, 0, 0);
+	//mlx_image_to_window(mlx, image, 0, 0);
 	mlx_loop(mlx);
 	mlx_terminate(mlx);
 	return (EXIT_SUCCESS);
