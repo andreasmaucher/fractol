@@ -5,7 +5,10 @@
 
 #include "fractol.h"
 
+//implement dynamic window sizing & scrolling
+
 static mlx_image_t* image;
+static double zoom = 1.0;  // Initial zoom level
 
 // -----------------------------------------------------------------------------
 
@@ -14,7 +17,7 @@ int32_t ft_pixel(int32_t r, int32_t g, int32_t b, int32_t a)
     return (r << 24 | g << 16 | b << 8 | a);
 }
 
-void ft_hook(void* param)
+/* void ft_hook(void* param)
 {
 	mlx_t* mlx = param;
 
@@ -28,6 +31,34 @@ void ft_hook(void* param)
 		image->instances[0].x -= 5;
 	if (mlx_is_key_down(mlx, MLX_KEY_RIGHT))
 		image->instances[0].x += 5;
+} */
+
+void ft_hook(void* param)
+{
+    mlx_t* mlx = param;
+
+    if (mlx_is_key_down(mlx, MLX_KEY_ESCAPE))
+        mlx_close_window(mlx);
+    if (mlx_is_key_down(mlx, MLX_KEY_UP))
+        image->instances[0].y -= 5;
+    if (mlx_is_key_down(mlx, MLX_KEY_DOWN))
+        image->instances[0].y += 5;
+    if (mlx_is_key_down(mlx, MLX_KEY_LEFT))
+        image->instances[0].x -= 5;
+    if (mlx_is_key_down(mlx, MLX_KEY_RIGHT))
+        image->instances[0].x += 5;
+   /*  if (mlx_is_mouse_scroll_up(mlx))
+    {
+        image->instances[0].x += image->width / 4;
+        image->instances[0].y += image->height / 4;
+        zoom *= 1.1;
+    }
+    if (mlx_is_mouse_scroll_down(mlx))
+    {
+        image->instances[0].x -= image->width / 4;
+        image->instances[0].y -= image->height / 4;
+        zoom *= 0.9;
+    } */
 }
 
 // -----------------------------------------------------------------------------
@@ -67,6 +98,8 @@ static int32_t color_map[16] = {
     0x7F7F7F  // gray
 };
 
+/* map the pixel coordinates (i, j) to the corresponding 
+complex coordinates (x, y)*/
 void mandelbrot_algo()
 {
     uint32_t i;
@@ -74,7 +107,9 @@ void mandelbrot_algo()
 	int32_t iter;
 	int32_t color;
     double x, y;
-
+	double size;
+	
+	size = fmax(3.0 / (WIDTH * zoom), 2.0 / (HEIGHT * zoom));
     for (i = 0; i < image->width; i++)
     {
         for (j = 0; j < image->height; j++)
@@ -89,10 +124,34 @@ void mandelbrot_algo()
             }
             else
             {
-                mlx_put_pixel(image, i, j, 0);
+                mlx_put_pixel(image, i, j, 0); //! adjust color
             }
         }
     }
+}
+
+/* void	scroll_handler(double xdelta, double ydelta, mlx_t* mlx)
+{
+	zoom += ydelta * 0.1;
+	zoom += xdelta * 0.1; //!not sure if really needed
+	mandelbrot_algo();
+	mlx_image_to_window(mlx, image, 0, 0);
+} */
+
+void my_scrollhook(double xdelta, double ydelta, void *param)
+{
+	// Simple up or down detection.
+	/* if (ydelta > 0)
+		puts("Up!");
+	else if (ydelta < 0)
+		puts("Down!"); */
+	(void)param;
+	(void)xdelta;
+	if (ydelta > 0)
+		zoom += ydelta * 0.1;
+	//zoom += xdelta * 0.1; //!not sure if really needed
+	mandelbrot_algo();
+	//mlx_image_to_window(mlx, image, 0, 0);
 }
 
 int32_t main()
@@ -121,7 +180,9 @@ int32_t main()
 	//mlx_loop_hook(mlx, ft_randomize, mlx);
 	mlx_loop_hook(mlx, mandelbrot_algo, mlx);
 	mlx_loop_hook(mlx, ft_hook, mlx);
-
+	//mlx_set_scroll_callback(mlx, scroll_handler, mlx);
+	mlx_scroll_hook(mlx, &my_scrollhook, NULL);
+	mlx_image_to_window(mlx, image, 0, 0);
 	mlx_loop(mlx);
 	mlx_terminate(mlx);
 	return (EXIT_SUCCESS);

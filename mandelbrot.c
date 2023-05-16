@@ -42,7 +42,6 @@ int main(void)
     void *win;
     int i, j, iter;
    
-   
     if (!(mlx = mlx_init(WIDTH, HEIGHT, "MLX42", true)))
 	{
 		puts(mlx_strerror(mlx_errno));
