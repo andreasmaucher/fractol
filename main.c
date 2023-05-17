@@ -154,36 +154,38 @@ void my_scrollhook(double xdelta, double ydelta, void *param)
 	//mlx_image_to_window(mlx, image, 0, 0);
 }
 
-int32_t main()
+int main(void)
 {
-	mlx_t* mlx;
+	t_fractol	*fractol;
 
-	// Gotta error check this stuff
-	if (!(mlx = mlx_init(WIDTH, HEIGHT, "MLX42", true)))
+	fractol = malloc(sizeof(t_fractol));
+	//if (fractol == NULL)
+	//	return (NULL);
+	if (!(fractol->window = mlx_init(WIDTH, HEIGHT, "fractol", true)))
 	{
 		puts(mlx_strerror(mlx_errno));
 		return(EXIT_FAILURE);
 	}
-	if (!(image = mlx_new_image(mlx, WIDTH, HEIGHT)))
+	if (!(fractol->image = mlx_new_image(fractol->window, WIDTH, HEIGHT)))
 	{
-		mlx_close_window(mlx);
+		mlx_close_window(fractol->window);
 		puts(mlx_strerror(mlx_errno));
 		return(EXIT_FAILURE);
 	}
-	if (mlx_image_to_window(mlx, image, 0, 0) == -1)
+	if (mlx_image_to_window(fractol->window, fractol->image, 0, 0) == -1)
 	{
-		mlx_close_window(mlx);
+		mlx_close_window(fractol->window);
 		puts(mlx_strerror(mlx_errno));
 		return(EXIT_FAILURE);
 	}
 	
 	//mlx_loop_hook(mlx, ft_randomize, mlx);
-	mlx_loop_hook(mlx, mandelbrot_algo, mlx);
-	mlx_loop_hook(mlx, ft_hook, mlx);
+	mlx_loop_hook(fractol->window, mandelbrot_algo, fractol);
+	mlx_loop_hook(fractol->window, ft_hook, fractol);
 	//mlx_set_scroll_callback(mlx, scroll_handler, mlx);
-	mlx_scroll_hook(mlx, &my_scrollhook, NULL);
+	mlx_scroll_hook(fractol->window, &my_scrollhook, NULL);
 	//mlx_image_to_window(mlx, image, 0, 0);
-	mlx_loop(mlx);
-	mlx_terminate(mlx);
+	mlx_loop(fractol->window);
+	mlx_terminate(fractol->window);
 	return (EXIT_SUCCESS);
 }

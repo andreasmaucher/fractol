@@ -42,8 +42,8 @@ struct color {
 
 typedef struct s_fractol
 {
-	char	m;
-	char	s;
+	mlx_t		*window;
+	mlx_image_t	*image;
 }			t_fractol;
 
 #endif
