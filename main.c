@@ -10,6 +10,8 @@
 static mlx_image_t* image;
 static double zoom = 1.0;  // Initial zoom level
 
+
+
 // -----------------------------------------------------------------------------
 
 int32_t ft_pixel(int32_t r, int32_t g, int32_t b, int32_t a)
@@ -154,37 +156,42 @@ void my_scrollhook(double xdelta, double ydelta, void *param)
 	//mlx_image_to_window(mlx, image, 0, 0);
 }
 
-int main(void)
+// only needs argv input for the Julia set
+t_fractol *initialize_window()
 {
 	t_fractol	*fractol;
 
 	fractol = malloc(sizeof(t_fractol));
-	//if (fractol == NULL)
-	//	return (NULL);
+	if (fractol == NULL)
+		return (NULL);
 	if (!(fractol->window = mlx_init(WIDTH, HEIGHT, "fractol", true)))
 	{
 		puts(mlx_strerror(mlx_errno));
-		return(EXIT_FAILURE);
+		return(EXIT_SUCCESS);
 	}
 	if (!(fractol->image = mlx_new_image(fractol->window, WIDTH, HEIGHT)))
 	{
 		mlx_close_window(fractol->window);
 		puts(mlx_strerror(mlx_errno));
-		return(EXIT_FAILURE);
+		return(EXIT_SUCCESS);
 	}
 	if (mlx_image_to_window(fractol->window, fractol->image, 0, 0) == -1)
 	{
 		mlx_close_window(fractol->window);
 		puts(mlx_strerror(mlx_errno));
-		return(EXIT_FAILURE);
+		return(EXIT_SUCCESS);
 	}
-	
-	//mlx_loop_hook(mlx, ft_randomize, mlx);
+	return(fractol);
+}
+
+int main(void)
+{
+	t_fractol	*fractol;
+
+	fractol = initialize_window();
 	mlx_loop_hook(fractol->window, mandelbrot_algo, fractol);
 	mlx_loop_hook(fractol->window, ft_hook, fractol);
-	//mlx_set_scroll_callback(mlx, scroll_handler, mlx);
-	mlx_scroll_hook(fractol->window, &my_scrollhook, NULL);
-	//mlx_image_to_window(mlx, image, 0, 0);
+	//mlx_scroll_hook(fractol->window, &my_scrollhook, NULL);
 	mlx_loop(fractol->window);
 	mlx_terminate(fractol->window);
 	return (EXIT_SUCCESS);
