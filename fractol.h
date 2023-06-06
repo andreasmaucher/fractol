@@ -30,11 +30,12 @@
 
 typedef struct s_complex
 {
-	double	x;
-	double	y;
+	double	r;
+	double	i;
 }	        t_cpx;
 
-struct color {
+struct color 
+{
     unsigned char R;
     unsigned char G;
     unsigned char B;
@@ -44,6 +45,8 @@ typedef struct s_fractol
 {
 	mlx_t		*window;
 	mlx_image_t	*image;
+	char		*type;
+	t_cpx		*origin;
 }			t_fractol;
 
 #endif

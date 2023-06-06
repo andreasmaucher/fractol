@@ -156,8 +156,19 @@ void my_scrollhook(double xdelta, double ydelta, void *param)
 	//mlx_image_to_window(mlx, image, 0, 0);
 }
 
+static void set_hooks_and_loops(t_fractol *fractol)
+{
+	color_fractol(fractol);
+	mlx_scroll_hook(fractol->window, &zoom_hook, fractol);
+	mlx_loop_hook(fractol->window, keys_hook, fractol);
+	mlx_resize_hook(fractol->window, NULL, NULL);
+	mlx_loop(fractol->window);
+	mlx_terminate(fractol->window);
+	free_all(fractol);
+}
+
 // only needs argv input for the Julia set
-t_fractol *initialize_window()
+t_fractol *initialize_window(char *set_type) //double x, double y only needed for Julia
 {
 	t_fractol	*fractol;
 
@@ -168,7 +179,7 @@ t_fractol *initialize_window()
 	fractol->window = mlx_init(WIDTH, HEIGHT, "fractol", true);
 	//creates and allocates a new image buffer
 	fractol->image = mlx_new_image(fractol->window, WIDTH, HEIGHT);
-	fractol->set = initialize_set()
+	fractol->set = initialize_set(set_type); //! not working because I have different structure
 	/* if (!(fractol->window = mlx_init(WIDTH, HEIGHT, "fractol", true)))
 	{
 		puts(mlx_strerror(mlx_errno));
@@ -193,11 +204,12 @@ int main(void)
 {
 	t_fractol	*fractol;
 
-	fractol = initialize_window();
-	mlx_loop_hook(fractol->window, mandelbrot_algo, fractol);
+	fractol = initialize_window(argv[1]);
+	set_hooks_&_loops(fractol);
+	/* mlx_loop_hook(fractol->window, mandelbrot_algo, fractol);
 	mlx_loop_hook(fractol->window, ft_hook, fractol);
 	//mlx_scroll_hook(fractol->window, &my_scrollhook, NULL);
 	mlx_loop(fractol->window);
-	mlx_terminate(fractol->window);
+	mlx_terminate(fractol->window); */
 	return (EXIT_SUCCESS);
 }
