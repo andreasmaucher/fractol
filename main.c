@@ -164,7 +164,12 @@ t_fractol *initialize_window()
 	fractol = malloc(sizeof(t_fractol));
 	if (fractol == NULL)
 		return (NULL);
-	if (!(fractol->window = mlx_init(WIDTH, HEIGHT, "fractol", true)))
+	//initializes a new MLX instance
+	fractol->window = mlx_init(WIDTH, HEIGHT, "fractol", true);
+	//creates and allocates a new image buffer
+	fractol->image = mlx_new_image(fractol->window, WIDTH, HEIGHT);
+	fractol->set = initialize_set()
+	/* if (!(fractol->window = mlx_init(WIDTH, HEIGHT, "fractol", true)))
 	{
 		puts(mlx_strerror(mlx_errno));
 		return(EXIT_SUCCESS);
@@ -180,7 +185,7 @@ t_fractol *initialize_window()
 		mlx_close_window(fractol->window);
 		puts(mlx_strerror(mlx_errno));
 		return(EXIT_SUCCESS);
-	}
+	} */
 	return(fractol);
 }
 

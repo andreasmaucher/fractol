@@ -1,0 +1,19 @@
+initialize fractol
+set hooks and loops
+
+initalize fractol
+	mlx init
+	mlx new image
+	(mlx image to window)
+	(initialise cursor)
+	(initialize zoom)
+	(initialize set)
+
+set hooks and loops
+	color_fractal(fractal);
+	mlx_scroll_hook(fractal->window, &zoom_hook, fractal);
+	mlx_loop_hook(fractal->window, keys_hook, fractal);
+	mlx_resize_hook(fractal->window, NULL, NULL);
+	mlx_loop(fractal->window);
+	mlx_terminate(fractal->window);
+	free_all(fractal);
