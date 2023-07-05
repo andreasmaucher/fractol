@@ -10,14 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-//#include "fractol.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include "MLX42/include/MLX42/MLX42.h"
-
-#define WIDTH 512
-#define HEIGHT 512
+#include "fractol.h"
 
 static mlx_image_t* image;
 
@@ -63,10 +56,158 @@ void ft_hook(void* param)
 
 // -----------------------------------------------------------------------------
 
-int32_t main(int32_t argc, const char* argv[])
+t_cpx	*move_fractol(t_cpx *num, t_fractol *fractol)
 {
-	mlx_t* mlx;
+	double	diff_x;
+	double	diff_y;
 
+	diff_x = fractol->cursor->after_zoom->pos->real
+		- fractol->cursor->before_zoom->pos->real;
+	diff_y = fractol->cursor->after_zoom->pos->imag
+		- fractol->cursor->before_zoom->pos->imag;
+	if (fractol->zoom->type == IN)
+	{
+		num->real = num->real + (ZOOM_FACTOR * fractol->zoom->shift) * diff_x;
+		num->imag = num->imag + (ZOOM_FACTOR * fractol->zoom->shift) * diff_y;
+	}
+	else if (fractol->zoom->type == OUT)
+	{
+		num->real = num->real - fractol->zoom->shift * diff_x;
+		num->imag = num->imag - fractol->zoom->shift * diff_y;
+	}
+	return (num);
+}
+
+t_cpx	*from_mlx_to_complex(double x, double y, t_fractol *fractol)
+{
+	t_cpx	*num;
+
+	num = malloc (sizeof(t_cpx));
+	if (num == NULL)
+		return (NULL);
+	num->real = (-1 + 2 * (x / WIDTH)) * WIDTH / HEIGHT * fractol->zoom->value;
+	num->imag = (1 - 2 * (y / HEIGHT)) * fractol->zoom->value;
+	return (num);
+}
+
+int	check_stability(t_cpx *z, t_cpx *c)
+{
+	t_cpx	*tmp;
+	int			i;
+
+	tmp = malloc (sizeof(t_cpx));
+	if (tmp == NULL)
+		return (0);
+	i = 0;
+	while (i < ITERATIONS)
+	{
+		tmp->real = (z->real * z->real - z->imag * z->imag) + c->real;
+		tmp->imag = (2 * z->real * z->imag) + c->imag;
+		z->real = tmp->real;
+		z->imag = tmp->imag;
+		if (z->real == INFINITY || z->imag == INFINITY
+			|| !(z->real == z->real) || !(z->imag == z->imag))
+		{
+			free(tmp);
+			return (i);
+		}
+		i++;
+	}
+	free(tmp);
+	return (i);
+}
+
+t_cpx	*initialize_complex(double real, double imag)
+{
+	t_cpx	*compl;
+
+	compl = malloc (sizeof(t_cpx));
+	if (compl == NULL)
+		return (NULL);
+	compl->real = real;
+	compl->imag = imag;
+	return (compl);
+}
+
+int	create_set(double x, double y, t_fractol *fractol)
+{
+	t_cpx	*z;
+	t_cpx	*c;
+	int			iterations;
+
+		c = from_mlx_to_complex(x, y, fractol);
+		c = move_fractol(c, fractol);
+		z = initialize_complex(0, 0);
+	iterations = check_stability(z, c);
+	free(z);
+	free(c);
+	return (iterations);
+}
+
+uint32_t	color_set(double x, double y, t_fractol *fractol)
+{
+	int			iter;
+	uint32_t	color;
+
+	iter = create_set(x, y, fractol);
+	if (iter < ITERATIONS)
+		color = ft_pixel(iter * 4, iter * 2, iter * 3, 58);
+	else
+		color = ft_pixel(0, 0, 0, 58);
+	return (color);
+}
+
+void	color_fractal(t_fractol *fractol)
+{
+	int				x;
+	int				y;
+	uint32_t		color;
+
+	x = 0;
+	while (x < WIDTH)
+	{
+		y = 0;
+		while (y < HEIGHT)
+		{
+			color = color_set(x, y, fractol);
+			mlx_put_pixel(fractol->image, x, y, color);
+			y++;
+		}
+		x++;
+	}
+}
+
+static void	set_hooks_and_loops(t_fractol *fractol)
+{
+	color_fractal(fractol);
+	//mlx_scroll_hook(fractol->window, &zoom_hook, fractol);
+	//mlx_loop_hook(fractol->window, keys_hook, fractol);
+	mlx_resize_hook(fractol->window, NULL, NULL);
+	mlx_loop(fractol->window);
+	mlx_terminate(fractol->window);
+	//free_all(fractol);
+}
+
+static	t_fractol	*initialize_fractol()//double x, double y
+{
+	t_fractol	*fractol;
+
+	fractol = malloc (sizeof(t_fractol));
+	if (fractol == NULL)
+		return (NULL);
+	fractol->window = mlx_init(WIDTH, HEIGHT, "fractol", true);
+	fractol->image = mlx_new_image(fractol->window, WIDTH, HEIGHT);
+	return (fractol);
+}
+
+int main() //int ac, char **av
+{
+	//mlx_t* mlx;
+	t_fractol	*fractol;
+
+	fractol = initialize_fractol();
+	set_hooks_and_loops(fractol);
+/* 
 	// Gotta error check this stuff
 	if (!(mlx = mlx_init(WIDTH, HEIGHT, "MLX42", true)))
 	{
@@ -90,6 +231,6 @@ int32_t main(int32_t argc, const char* argv[])
 	mlx_loop_hook(mlx, ft_hook, mlx);
 
 	mlx_loop(mlx);
-	mlx_terminate(mlx);
+	mlx_terminate(mlx); */
 	return (EXIT_SUCCESS);
 }

@@ -16,9 +16,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include "MLX42/include/MLX42/MLX42.h"
-#include "MLX42/include/MLX42/MLX42_Int.h"
-#include "MLX42/include/MLX42/MLX42_Input.h"
+#include "./MLX42/include/MLX42/MLX42.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -27,11 +25,16 @@
 
 #define WIDTH 520
 #define HEIGHT 520
+#define ITERATIONS 100
+#define ZOOM_FACTOR 0.7
+#define IN 0
+#define OUT 1
+#define START 2
 
 typedef struct s_complex
 {
-	double	r;
-	double	i;
+	double	real;
+	double	imag;
 }	        t_cpx;
 
 struct color 
@@ -41,12 +44,41 @@ struct color
     unsigned char B;
 };
 
+typedef struct s_zoom
+{
+	double	value;
+	bool	type;
+	double	shift;
+}	t_zoom;
+
+typedef struct s_point
+{
+	int32_t		x;
+	int32_t		y;
+	t_cpx	*pos;
+}	t_point;
+
+typedef struct s_cursor
+{
+	t_point	*before_zoom;
+	t_point	*after_zoom;
+}	t_cursor;
+
+typedef struct s_set
+{
+	char		*type;
+	t_cpx		*origin;
+}	t_set;
+
 typedef struct s_fractol
 {
 	mlx_t		*window;
 	mlx_image_t	*image;
 	char		*type;
 	t_cpx		*origin;
+	t_set			*set;
+	t_zoom		*zoom;
+	t_cursor	*cursor;
 }			t_fractol;
 
 #endif
