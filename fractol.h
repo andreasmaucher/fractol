@@ -22,10 +22,12 @@
 #include <stdbool.h>
 #include <complex.h>
 #include <math.h>
+//#define NULL 0
+#include <stddef.h>
 
-#define WIDTH 520
-#define HEIGHT 520
-#define ITERATIONS 100
+#define WIDTH 1920
+#define HEIGHT 995
+#define ITERATIONS 200
 #define ZOOM_FACTOR 0.7
 #define IN 0
 #define OUT 1

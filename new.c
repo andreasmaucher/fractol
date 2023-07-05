@@ -96,7 +96,7 @@ int	check_stability(t_cpx *z, t_cpx *c)
 	int			i;
 
 	tmp = malloc (sizeof(t_cpx));
-	if (tmp == NULL)
+	if (tmp == 0)
 		return (0);
 	i = 0;
 	while (i < ITERATIONS)
@@ -122,8 +122,8 @@ t_cpx	*initialize_complex(double real, double imag)
 	t_cpx	*compl;
 
 	compl = malloc (sizeof(t_cpx));
-	if (compl == NULL)
-		return (NULL);
+	if (compl == 0)
+		return (0);
 	compl->real = real;
 	compl->imag = imag;
 	return (compl);
@@ -177,12 +177,52 @@ void	color_fractal(t_fractol *fractol)
 	}
 }
 
+void	store_cursor_position(t_fractol *fractol, t_point *cursor)
+{
+	free(cursor->pos);
+	mlx_get_mouse_pos(fractol->window, &(cursor->x), &(cursor->y));
+	cursor->pos = from_mlx_to_complex(cursor->x, cursor->y, fractol);
+}
+
+void	zoom_hook(double xdelta, double ydelta, void *param)
+{
+	t_fractol	*fractol;
+
+	fractol = (t_fractol *) param;
+	store_cursor_position(fractol, fractol->cursor->before_zoom);
+	if (ydelta > 0)
+	{
+		fractol->zoom->type = OUT;
+		fractol->zoom->value = fractol->zoom->value / ZOOM_FACTOR;
+		fractol->zoom->shift = 1 + fractol->zoom->shift * ZOOM_FACTOR;
+	}
+	else if (ydelta < 0)
+	{
+		fractol->zoom->type = IN;
+		fractol->zoom->value = fractol->zoom->value * ZOOM_FACTOR;
+		fractol->zoom->shift = (fractol->zoom->shift - 1) / ZOOM_FACTOR;
+	}
+	store_cursor_position(fractol, fractol->cursor->after_zoom);
+	color_fractal(fractol);
+	(void) xdelta;
+	(void) xdelta;
+}
+
+void	keys_hook(void *param)
+{
+	t_fractol	*fractol;
+
+	fractol = (t_fractol *) param;
+	if (mlx_is_key_down(fractol->window, MLX_KEY_ESCAPE))
+		mlx_close_window(fractol->window);
+}
+
 static void	set_hooks_and_loops(t_fractol *fractol)
 {
 	color_fractal(fractol);
-	//mlx_scroll_hook(fractol->window, &zoom_hook, fractol);
-	//mlx_loop_hook(fractol->window, keys_hook, fractol);
-	mlx_resize_hook(fractol->window, NULL, NULL);
+	mlx_scroll_hook(fractol->window, &zoom_hook, fractol);
+	mlx_loop_hook(fractol->window, keys_hook, fractol);
+	mlx_resize_hook(fractol->window, 0, 0); //NULL NULL
 	mlx_loop(fractol->window);
 	mlx_terminate(fractol->window);
 	//free_all(fractol);
@@ -193,8 +233,8 @@ static	t_fractol	*initialize_fractol()//double x, double y
 	t_fractol	*fractol;
 
 	fractol = malloc (sizeof(t_fractol));
-	if (fractol == NULL)
-		return (NULL);
+	if (fractol == 0)
+		return (0);
 	fractol->window = mlx_init(WIDTH, HEIGHT, "fractol", true);
 	fractol->image = mlx_new_image(fractol->window, WIDTH, HEIGHT);
 	return (fractol);
