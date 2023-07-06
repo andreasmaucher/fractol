@@ -13,6 +13,7 @@
 #include "fractol.h"
 
 static mlx_image_t* image;
+static double zoom = 1.0;
 
 // -----------------------------------------------------------------------------
 
@@ -76,6 +77,7 @@ t_cpx	*from_mlx_to_complex(double x, double y, t_fractol *fractol)
 	return (num);
 }
 
+/* does a number go to infinity or not?!*/
 int	check_stability(t_cpx *z, t_cpx *c)
 {
 	t_cpx	*tmp;
@@ -122,7 +124,7 @@ int	create_set(double x, double y, t_fractol *fractol)
 	int			iterations;
 
 		c = from_mlx_to_complex(x, y, fractol);
-		c = move_fractol(c, fractol);
+		//for zoom: c = move_fractol(c, fractol);
 		z = initialize_complex(0, 0);
 	iterations = check_stability(z, c);
 	free(z);
@@ -141,6 +143,72 @@ uint32_t	color_set(double x, double y, t_fractol *fractol)
 	else
 		color = ft_pixel(0, 0, 0, 58);
 	return (color);
+}
+
+int mandelbrot(double cr, double ci)
+{
+    int i;
+    double zr = 0.0, zi = 0.0, zr_new;
+
+    for (i = 0; i < 1000; i++)
+    {
+        zr_new = zr * zr - zi * zi + cr;
+        zi = 2.0 * zr * zi + ci;
+        zr = zr_new;
+        if (zr * zr + zi * zi > 4.0)
+            return (i);
+    }
+    return (0);
+}
+
+static int32_t color_map[16] = {
+    0x000000, // black
+    0xFF0000, // red
+    0xFF7F00, // orange
+    0xFFFF00, // yellow
+    0x00FF00, // green
+    0x00FFFF, // cyan
+    0x0000FF, // blue
+    0xFF00FF, // magenta
+    0x7F0000, // dark red
+    0x7F3F00, // dark orange
+    0x7F7F00, // dark yellow
+    0x007F00, // dark green
+    0x007F7F, // dark cyan
+    0x00007F, // dark blue
+    0x7F007F, // dark magenta
+    0x7F7F7F  // gray
+};
+
+void mandelbrot_algo(t_fractol *fractol)
+{
+    uint32_t i;
+	uint32_t j;
+	int32_t iter;
+	uint32_t color;
+    double x, y;
+	double size;
+	//t_fractol *fractol;
+	
+	size = fmax(3.0 / (WIDTH * zoom), 2.0 / (HEIGHT * zoom));
+    for (i = 0; i < WIDTH; i++)
+    {
+        for (j = 0; j < HEIGHT; j++)
+        {
+            x = ((double)i / WIDTH) * 3.0 - 2.0;
+            y = ((double)j / HEIGHT) * 3.0 - 1.5;
+            iter = mandelbrot(x, y);
+            if (iter > 0)
+            {
+				color = (iter < 16) ? color_map[iter] : 0x000000;
+                mlx_put_pixel(fractol->image, i, j, color);
+            }
+            /* else
+            {
+                mlx_put_pixel(fractol->image, i, j, 0); //! adjust color
+            } */
+        }
+    }
 }
 
 void	color_fractal(t_fractol *fractol)
@@ -242,7 +310,8 @@ static	t_fractol	*initialize_fractol()//double x, double y
 	/* if (!fractol->image || (mlx_image_to_window(fractol->window,
 				fractol->image, 0, 0) == -1))
 		ft_error(); */
-	//mlx_loop_hook(fractol->window, ft_randomize, fractol); //responsible for grey box
+	mandelbrot_algo(fractol);
+	//mlx_loop_hook(fractol->window, mandelbrot_algo, fractol); //responsible for grey box
 	mlx_loop_hook(fractol->window, ft_keys, fractol); //resposible for key movements
 
 	mlx_loop(fractol->window); //keeps the window open until its closed by the user
