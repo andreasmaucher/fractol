@@ -23,19 +23,21 @@ int32_t ft_pixel(int32_t r, int32_t g, int32_t b, int32_t a)
 
 void ft_randomize(void* param)
 {
-	for (int32_t i = 0; i < image->width; ++i)
+	t_fractol	*fractol;
+
+	/*for (int32_t i = 0; i < fractol->image->width; ++i)
 	{
-		for (int32_t y = 0; y < image->height; ++y)
-		{
+		for (int32_t y = 0; y < fractol->image->height; ++y)
+		{ */
 			uint32_t color = ft_pixel(
 				rand() % 0xFF, // R
 				rand() % 0xFF, // G
 				rand() % 0xFF, // B
 				rand() % 0xFF  // A
 			);
-			mlx_put_pixel(image, i, y, color);
-		}
-	}
+			//mlx_put_pixel(fractol->image, i, y, color);
+		//}
+	//}
 }
 
 void ft_hook(void* param)
@@ -247,7 +249,7 @@ static	t_fractol	*initialize_fractol()//double x, double y
 	/* if (!fractol->image || (mlx_image_to_window(fractol->window,
 				fractol->image, 0, 0) == -1))
 		ft_error(); */
-	mlx_loop_hook(fractol->window, ft_randomize, fractol->window); //responsible for grey box
+	mlx_loop_hook(fractol->window, ft_randomize, fractol); //responsible for grey box
 	mlx_loop_hook(fractol->window, ft_hook, fractol->window); //resposible for key movements
 
 	mlx_loop(fractol->window); //keeps the window open until its closed by the user
