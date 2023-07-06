@@ -40,22 +40,6 @@ void ft_randomize(void* param)
 	//}
 }
 
-void ft_hook(void* param)
-{
-	mlx_t* mlx = param;
-
-	if (mlx_is_key_down(mlx, MLX_KEY_ESCAPE))
-		mlx_close_window(mlx);
-	if (mlx_is_key_down(mlx, MLX_KEY_UP))
-		image->instances[0].y -= 5;
-	if (mlx_is_key_down(mlx, MLX_KEY_DOWN))
-		image->instances[0].y += 5;
-	if (mlx_is_key_down(mlx, MLX_KEY_LEFT))
-		image->instances[0].x -= 5;
-	if (mlx_is_key_down(mlx, MLX_KEY_RIGHT))
-		image->instances[0].x += 5;
-}
-
 // -----------------------------------------------------------------------------
 
 t_cpx	*move_fractol(t_cpx *num, t_fractol *fractol)
@@ -210,20 +194,29 @@ void	color_fractal(t_fractol *fractol)
 	(void) xdelta;
 } */
 
-void	keys_hook(void *param)
+/* handling arrow keys & escape button movements */
+void ft_keys(void* param)
 {
 	t_fractol	*fractol;
 
 	fractol = (t_fractol *) param;
 	if (mlx_is_key_down(fractol->window, MLX_KEY_ESCAPE))
 		mlx_close_window(fractol->window);
+	if (mlx_is_key_down(fractol->window, MLX_KEY_UP))
+		image->instances[0].y -= 5;
+	if (mlx_is_key_down(fractol->window, MLX_KEY_DOWN))
+		image->instances[0].y += 5;
+	if (mlx_is_key_down(fractol->window, MLX_KEY_LEFT))
+		image->instances[0].x -= 5;
+	if (mlx_is_key_down(fractol->window, MLX_KEY_RIGHT))
+		image->instances[0].x += 5;
 }
 
 static void	set_hooks_and_loops(t_fractol *fractol)
 {
 	color_fractal(fractol);
 	//mlx_scroll_hook(fractol->window, &zoom_hook, fractol);
-	mlx_loop_hook(fractol->window, keys_hook, fractol);
+	//mlx_loop_hook(fractol->window, keys_hook, fractol);
 	mlx_resize_hook(fractol->window, 0, 0); //NULL NULL
 	mlx_loop(fractol->window);
 	mlx_terminate(fractol->window);
@@ -249,8 +242,8 @@ static	t_fractol	*initialize_fractol()//double x, double y
 	/* if (!fractol->image || (mlx_image_to_window(fractol->window,
 				fractol->image, 0, 0) == -1))
 		ft_error(); */
-	mlx_loop_hook(fractol->window, ft_randomize, fractol); //responsible for grey box
-	mlx_loop_hook(fractol->window, ft_hook, fractol->window); //resposible for key movements
+	//mlx_loop_hook(fractol->window, ft_randomize, fractol); //responsible for grey box
+	mlx_loop_hook(fractol->window, ft_keys, fractol); //resposible for key movements
 
 	mlx_loop(fractol->window); //keeps the window open until its closed by the user
 	mlx_terminate(fractol->window);
@@ -259,41 +252,8 @@ static	t_fractol	*initialize_fractol()//double x, double y
 
 int main() //int ac, char **av
 {
-	mlx_t* mlx;
 	t_fractol	*fractol;
 
 	fractol = initialize_fractol();
-	//set_hooks_and_loops(fractol);
-
-	//set_hooks_and_loops(initialize_fractol());
-
-	// Gotta error check this stuff
-	/* if (!(mlx = mlx_init(WIDTH, HEIGHT, "MLX42", true)))
-	{
-		puts(mlx_strerror(mlx_errno));
-		return(EXIT_FAILURE);
-	}
-	if (!(image = mlx_new_image(mlx, 128, 128)))
-	{
-		mlx_close_window(mlx);
-		puts(mlx_strerror(mlx_errno));
-		return(EXIT_FAILURE);
-	}
-	if (mlx_image_to_window(mlx, image, 0, 0) == -1)
-	{
-		mlx_close_window(mlx);
-		puts(mlx_strerror(mlx_errno));
-		return(EXIT_FAILURE);
-	} */
-
-	/* mlx = mlx_init(WIDTH, HEIGHT, "MLX42", true);
-	image = mlx_new_image(mlx, 128, 128);
-	mlx_image_to_window(mlx, image, 0, 0); //without it there would be no visual image
-	
-	mlx_loop_hook(mlx, ft_randomize, mlx); //responsible for grey box
-	mlx_loop_hook(mlx, ft_hook, mlx); //resposible for key movements
-
-	mlx_loop(mlx); //keeps the window open until its closed by the user
-	mlx_terminate(mlx); */
 	return (EXIT_SUCCESS);
 }
