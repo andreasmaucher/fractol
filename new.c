@@ -177,14 +177,14 @@ void	color_fractal(t_fractol *fractol)
 	}
 }
 
-void	store_cursor_position(t_fractol *fractol, t_point *cursor)
+/* void	store_cursor_position(t_fractol *fractol, t_point *cursor)
 {
 	free(cursor->pos);
 	mlx_get_mouse_pos(fractol->window, &(cursor->x), &(cursor->y));
 	cursor->pos = from_mlx_to_complex(cursor->x, cursor->y, fractol);
-}
+} */
 
-void	zoom_hook(double xdelta, double ydelta, void *param)
+/* void	zoom_hook(double xdelta, double ydelta, void *param)
 {
 	t_fractol	*fractol;
 
@@ -206,7 +206,7 @@ void	zoom_hook(double xdelta, double ydelta, void *param)
 	color_fractal(fractol);
 	(void) xdelta;
 	(void) xdelta;
-}
+} */
 
 void	keys_hook(void *param)
 {
@@ -220,12 +220,18 @@ void	keys_hook(void *param)
 static void	set_hooks_and_loops(t_fractol *fractol)
 {
 	color_fractal(fractol);
-	mlx_scroll_hook(fractol->window, &zoom_hook, fractol);
+	//mlx_scroll_hook(fractol->window, &zoom_hook, fractol);
 	mlx_loop_hook(fractol->window, keys_hook, fractol);
 	mlx_resize_hook(fractol->window, 0, 0); //NULL NULL
 	mlx_loop(fractol->window);
 	mlx_terminate(fractol->window);
 	//free_all(fractol);
+}
+
+void	ft_error(void)
+{
+	printf("%s", mlx_strerror(mlx_errno));
+	exit(EXIT_FAILURE);
 }
 
 static	t_fractol	*initialize_fractol()//double x, double y
@@ -237,19 +243,30 @@ static	t_fractol	*initialize_fractol()//double x, double y
 		return (0);
 	fractol->window = mlx_init(WIDTH, HEIGHT, "fractol", true);
 	fractol->image = mlx_new_image(fractol->window, WIDTH, HEIGHT);
+	mlx_image_to_window(fractol->window, fractol->image, 0, 0);
+	/* if (!fractol->image || (mlx_image_to_window(fractol->window,
+				fractol->image, 0, 0) == -1))
+		ft_error(); */
+	mlx_loop_hook(fractol->window, ft_randomize, fractol->window); //responsible for grey box
+	mlx_loop_hook(fractol->window, ft_hook, fractol->window); //resposible for key movements
+
+	mlx_loop(fractol->window); //keeps the window open until its closed by the user
+	mlx_terminate(fractol->window);
 	return (fractol);
 }
 
 int main() //int ac, char **av
 {
-	//mlx_t* mlx;
+	mlx_t* mlx;
 	t_fractol	*fractol;
 
 	fractol = initialize_fractol();
-	set_hooks_and_loops(fractol);
-/* 
+	//set_hooks_and_loops(fractol);
+
+	//set_hooks_and_loops(initialize_fractol());
+
 	// Gotta error check this stuff
-	if (!(mlx = mlx_init(WIDTH, HEIGHT, "MLX42", true)))
+	/* if (!(mlx = mlx_init(WIDTH, HEIGHT, "MLX42", true)))
 	{
 		puts(mlx_strerror(mlx_errno));
 		return(EXIT_FAILURE);
@@ -265,12 +282,16 @@ int main() //int ac, char **av
 		mlx_close_window(mlx);
 		puts(mlx_strerror(mlx_errno));
 		return(EXIT_FAILURE);
-	}
-	
-	mlx_loop_hook(mlx, ft_randomize, mlx);
-	mlx_loop_hook(mlx, ft_hook, mlx);
+	} */
 
-	mlx_loop(mlx);
+	/* mlx = mlx_init(WIDTH, HEIGHT, "MLX42", true);
+	image = mlx_new_image(mlx, 128, 128);
+	mlx_image_to_window(mlx, image, 0, 0); //without it there would be no visual image
+	
+	mlx_loop_hook(mlx, ft_randomize, mlx); //responsible for grey box
+	mlx_loop_hook(mlx, ft_hook, mlx); //resposible for key movements
+
+	mlx_loop(mlx); //keeps the window open until its closed by the user
 	mlx_terminate(mlx); */
 	return (EXIT_SUCCESS);
 }
