@@ -143,22 +143,22 @@ int mandelbrot(double cr, double ci)
 }
 
 static int32_t color_map[16] = {
-    0x000000, // black
-    0xFF0000, // red
-    0xFF7F00, // orange
-    0xFFFF00, // yellow
-    0x00FF00, // green
-    0x00FFFF, // cyan
-    0x0000FF, // blue
-    0xFF00FF, // magenta
-    0x7F0000, // dark red
-    0x7F3F00, // dark orange
-    0x7F7F00, // dark yellow
-    0x007F00, // dark green
-    0x007F7F, // dark cyan
-    0x00007F, // dark blue
-    0x7F007F, // dark magenta
-    0x7F7F7F  // gray
+    0x421E0F,
+	0x19071A,
+	0x09012F,
+	0x040449,
+	0x000764,
+	0x0C2C8A,
+	0x1852B1,
+	0x397DD1,
+	0x86B5E5,
+	0xD3ECF8,
+	0xF1E9BF,
+	0xF8C95F,
+	0xFFAA00,
+	0xCC8000,
+	0x995700,
+	0x6A3403,
 };
 
 /* void mandelbrot_algo(t_fractol *fractol)
@@ -202,7 +202,9 @@ void mandelbrot_algo(t_fractol *fractol)
 	double Re_factor = (MaxRe-MinRe)/(WIDTH-1);
 	double Im_factor = (MaxIm-MinIm)/(HEIGHT-1);
 	unsigned MaxIterations = 30;
-	int isInside;
+	//int isInside;
+	unsigned n=0;
+	uint32_t color;
 
 	for(unsigned y=0; y<HEIGHT; ++y)
 	{
@@ -212,18 +214,44 @@ void mandelbrot_algo(t_fractol *fractol)
 			double c_re = MinRe + x*Re_factor;
 
 			double Z_re = c_re, Z_im = c_im;
-			for(unsigned n=0; n<MaxIterations; ++n)
+			n = 0;
+			while(n<MaxIterations)  //after this loop we get value between 0 and max iter
 			{
 				double Z_re2 = Z_re*Z_re, Z_im2 = Z_im*Z_im;
 				if(Z_re2 + Z_im2 > 4)
 				{
-					isInside = false;
+					//isInside = false;
 					break;
 				}
 				Z_im = 2*Z_re*Z_im + c_im;
 				Z_re = Z_re2 - Z_im2 + c_re;
+				n++;
 			}
-			if(isInside) {  mlx_put_pixel(fractol->image, x, y, ft_pixel(0, 0, 0, 1)); }
+			if (n < MaxIterations && n > 0)
+			{
+				int i = n % 16;
+				color = (n < 16) ? color_map[n] : 0x000000;
+				mlx_put_pixel(fractol->image, x, y, color);
+				printf("color");
+			}
+			/* 
+			if (n == MaxIterations)
+				{
+					mlx_put_pixel(fractol->image, x, y, ft_pixel(0, 0, 0, 1));
+					printf("Test");
+				}
+			else
+				{
+					color = (n < 16) ? color_map[n] : 0x000000;
+					mlx_put_pixel(fractol->image, x, y, color);
+					printf("color");
+				} */
+			//if(isInside) {  mlx_put_pixel(fractol->image, x, y, ft_pixel(0, 0, 0, 1)); }
+			else 
+				{
+					mlx_put_pixel(fractol->image, x, y, ft_pixel(0, 0, 0, 1));
+					printf("black");
+				}
 		}
 	}
 }
