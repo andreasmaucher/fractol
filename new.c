@@ -22,25 +22,6 @@ int32_t ft_pixel(int32_t r, int32_t g, int32_t b, int32_t a)
     return (r << 24 | g << 16 | b << 8 | a);
 }
 
-void ft_randomize(void* param)
-{
-	t_fractol	*fractol;
-
-	/*for (int32_t i = 0; i < fractol->image->width; ++i)
-	{
-		for (int32_t y = 0; y < fractol->image->height; ++y)
-		{ */
-			uint32_t color = ft_pixel(
-				rand() % 0xFF, // R
-				rand() % 0xFF, // G
-				rand() % 0xFF, // B
-				rand() % 0xFF  // A
-			);
-			//mlx_put_pixel(fractol->image, i, y, color);
-		//}
-	//}
-}
-
 // -----------------------------------------------------------------------------
 
 t_cpx	*move_fractol(t_cpx *num, t_fractol *fractol)
@@ -180,7 +161,7 @@ static int32_t color_map[16] = {
     0x7F7F7F  // gray
 };
 
-void mandelbrot_algo(t_fractol *fractol)
+/* void mandelbrot_algo(t_fractol *fractol)
 {
     uint32_t i;
 	uint32_t j;
@@ -203,14 +184,50 @@ void mandelbrot_algo(t_fractol *fractol)
 				color = (iter < 16) ? color_map[iter] : 0x000000;
                 mlx_put_pixel(fractol->image, i, j, color);
             }
-            /* else
+            else
             {
-                mlx_put_pixel(fractol->image, i, j, 0); //! adjust color
-            } */
+                mlx_put_pixel(fractol->image, i, j, ft_pixel(0, 0, 0, 1)); //! adjust color
+            }
         }
     }
-}
+} */
 
+
+void mandelbrot_algo(t_fractol *fractol)
+{
+	double MinRe = -2.0;
+	double MaxRe = 1.0;
+	double MinIm = -1.2;
+	double MaxIm = MinIm+(MaxRe-MinRe)*HEIGHT/WIDTH;
+	double Re_factor = (MaxRe-MinRe)/(WIDTH-1);
+	double Im_factor = (MaxIm-MinIm)/(HEIGHT-1);
+	unsigned MaxIterations = 30;
+	int isInside;
+
+	for(unsigned y=0; y<HEIGHT; ++y)
+	{
+		double c_im = MaxIm - y*Im_factor;
+		for(unsigned x=0; x<WIDTH; ++x)
+		{
+			double c_re = MinRe + x*Re_factor;
+
+			double Z_re = c_re, Z_im = c_im;
+			for(unsigned n=0; n<MaxIterations; ++n)
+			{
+				double Z_re2 = Z_re*Z_re, Z_im2 = Z_im*Z_im;
+				if(Z_re2 + Z_im2 > 4)
+				{
+					isInside = false;
+					break;
+				}
+				Z_im = 2*Z_re*Z_im + c_im;
+				Z_re = Z_re2 - Z_im2 + c_re;
+			}
+			if(isInside) {  mlx_put_pixel(fractol->image, x, y, ft_pixel(0, 0, 0, 1)); }
+		}
+	}
+}
+/* 
 void	color_fractal(t_fractol *fractol)
 {
 	int				x;
@@ -230,7 +247,7 @@ void	color_fractal(t_fractol *fractol)
 		x++;
 	}
 }
-
+ */
 /* void	store_cursor_position(t_fractol *fractol, t_point *cursor)
 {
 	free(cursor->pos);
@@ -279,7 +296,7 @@ void ft_keys(void* param)
 	if (mlx_is_key_down(fractol->window, MLX_KEY_RIGHT))
 		image->instances[0].x += 5;
 }
-
+/* 
 static void	set_hooks_and_loops(t_fractol *fractol)
 {
 	color_fractal(fractol);
@@ -296,7 +313,7 @@ void	ft_error(void)
 	printf("%s", mlx_strerror(mlx_errno));
 	exit(EXIT_FAILURE);
 }
-
+ */
 static	t_fractol	*initialize_fractol()//double x, double y
 {
 	t_fractol	*fractol;
@@ -307,13 +324,8 @@ static	t_fractol	*initialize_fractol()//double x, double y
 	fractol->window = mlx_init(WIDTH, HEIGHT, "fractol", true);
 	fractol->image = mlx_new_image(fractol->window, WIDTH, HEIGHT);
 	mlx_image_to_window(fractol->window, fractol->image, 0, 0);
-	/* if (!fractol->image || (mlx_image_to_window(fractol->window,
-				fractol->image, 0, 0) == -1))
-		ft_error(); */
 	mandelbrot_algo(fractol);
-	//mlx_loop_hook(fractol->window, mandelbrot_algo, fractol); //responsible for grey box
 	mlx_loop_hook(fractol->window, ft_keys, fractol); //resposible for key movements
-
 	mlx_loop(fractol->window); //keeps the window open until its closed by the user
 	mlx_terminate(fractol->window);
 	return (fractol);
