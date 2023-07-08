@@ -46,86 +46,6 @@ t_cpx	*move_fractol(t_cpx *num, t_fractol *fractol)
 	return (num);
 }
 
-t_cpx	*from_mlx_to_complex(double x, double y, t_fractol *fractol)
-{
-	t_cpx	*num;
-
-	num = malloc (sizeof(t_cpx));
-	if (num == NULL)
-		return (NULL);
-	num->real = (-1 + 2 * (x / WIDTH)) * WIDTH / HEIGHT * fractol->zoom->value;
-	num->imag = (1 - 2 * (y / HEIGHT)) * fractol->zoom->value;
-	return (num);
-}
-
-/* does a number go to infinity or not?!*/
-int	check_stability(t_cpx *z, t_cpx *c)
-{
-	t_cpx	*tmp;
-	int			i;
-
-	tmp = malloc (sizeof(t_cpx));
-	if (tmp == 0)
-		return (0);
-	i = 0;
-	while (i < ITERATIONS)
-	{
-		tmp->real = (z->real * z->real - z->imag * z->imag) + c->real;
-		tmp->imag = (2 * z->real * z->imag) + c->imag;
-		z->real = tmp->real;
-		z->imag = tmp->imag;
-		if (z->real == INFINITY || z->imag == INFINITY
-			|| !(z->real == z->real) || !(z->imag == z->imag))
-		{
-			free(tmp);
-			return (i);
-		}
-		i++;
-	}
-	free(tmp);
-	return (i);
-}
-
-t_cpx	*initialize_complex(double real, double imag)
-{
-	t_cpx	*compl;
-
-	compl = malloc (sizeof(t_cpx));
-	if (compl == 0)
-		return (0);
-	compl->real = real;
-	compl->imag = imag;
-	return (compl);
-}
-
-int	create_set(double x, double y, t_fractol *fractol)
-{
-	t_cpx	*z;
-	t_cpx	*c;
-	int			iterations;
-
-		c = from_mlx_to_complex(x, y, fractol);
-		//for zoom: c = move_fractol(c, fractol);
-		z = initialize_complex(0, 0);
-	iterations = check_stability(z, c);
-	free(z);
-	free(c);
-	return (iterations);
-}
-
-uint32_t	color_set(double x, double y, t_fractol *fractol)
-{
-	int			iter;
-	uint32_t	color;
-
-	iter = create_set(x, y, fractol);
-	if (iter < ITERATIONS)
-		color = ft_pixel(iter * 4, iter * 2, iter * 3, 58);
-	else
-		color = ft_pixel(0, 0, 0, 58);
-	return (color);
-}
-
 int mandelbrot(double cr, double ci)
 {
     int i;
@@ -161,48 +81,14 @@ static int32_t color_map[16] = {
 	0x6A3403,
 };
 
-/* void mandelbrot_algo(t_fractol *fractol)
-{
-    uint32_t i;
-	uint32_t j;
-	int32_t iter;
-	uint32_t color;
-    double x, y;
-	double size;
-	//t_fractol *fractol;
-	
-	size = fmax(3.0 / (WIDTH * zoom), 2.0 / (HEIGHT * zoom));
-    for (i = 0; i < WIDTH; i++)
-    {
-        for (j = 0; j < HEIGHT; j++)
-        {
-            x = ((double)i / WIDTH) * 3.0 - 2.0;
-            y = ((double)j / HEIGHT) * 3.0 - 1.5;
-            iter = mandelbrot(x, y);
-            if (iter > 0)
-            {
-				color = (iter < 16) ? color_map[iter] : 0x000000;
-                mlx_put_pixel(fractol->image, i, j, color);
-            }
-            else
-            {
-                mlx_put_pixel(fractol->image, i, j, ft_pixel(0, 0, 0, 1)); //! adjust color
-            }
-        }
-    }
-} */
-
-
 void mandelbrot_algo(t_fractol *fractol)
 {
-	double MinRe = -2.0;
-	double MaxRe = 1.0;
-	double MinIm = -1.2;
+	double MinRe = -4.2;
+	double MaxRe = 1.5;
+	double MinIm = -1.5;
 	double MaxIm = MinIm+(MaxRe-MinRe)*HEIGHT/WIDTH;
 	double Re_factor = (MaxRe-MinRe)/(WIDTH-1);
 	double Im_factor = (MaxIm-MinIm)/(HEIGHT-1);
-	unsigned MaxIterations = 30;
-	//int isInside;
 	unsigned n=0;
 	uint32_t color;
 
@@ -215,38 +101,21 @@ void mandelbrot_algo(t_fractol *fractol)
 
 			double Z_re = c_re, Z_im = c_im;
 			n = 0;
-			while(n<MaxIterations)  //after this loop we get value between 0 and max iter
+			while(n<ITERATIONS)  //after this loop we get value between 0 and max iter
 			{
 				double Z_re2 = Z_re*Z_re, Z_im2 = Z_im*Z_im;
 				if(Z_re2 + Z_im2 > 4)
-				{
-					//isInside = false;
 					break;
-				}
 				Z_im = 2*Z_re*Z_im + c_im;
 				Z_re = Z_re2 - Z_im2 + c_re;
 				n++;
 			}
-			if (n < MaxIterations && n > 0)
+			if (n < ITERATIONS && n > 0)
 			{
 				int i = n % 16;
 				color = (n < 16) ? color_map[n] : 0x000000;
 				mlx_put_pixel(fractol->image, x, y, color);
-				printf("color");
 			}
-			/* 
-			if (n == MaxIterations)
-				{
-					mlx_put_pixel(fractol->image, x, y, ft_pixel(0, 0, 0, 1));
-					printf("Test");
-				}
-			else
-				{
-					color = (n < 16) ? color_map[n] : 0x000000;
-					mlx_put_pixel(fractol->image, x, y, color);
-					printf("color");
-				} */
-			//if(isInside) {  mlx_put_pixel(fractol->image, x, y, ft_pixel(0, 0, 0, 1)); }
 			else 
 				{
 					mlx_put_pixel(fractol->image, x, y, ft_pixel(0, 0, 0, 1));
@@ -255,57 +124,6 @@ void mandelbrot_algo(t_fractol *fractol)
 		}
 	}
 }
-/* 
-void	color_fractal(t_fractol *fractol)
-{
-	int				x;
-	int				y;
-	uint32_t		color;
-
-	x = 0;
-	while (x < WIDTH)
-	{
-		y = 0;
-		while (y < HEIGHT)
-		{
-			color = color_set(x, y, fractol);
-			mlx_put_pixel(fractol->image, x, y, color);
-			y++;
-		}
-		x++;
-	}
-}
- */
-/* void	store_cursor_position(t_fractol *fractol, t_point *cursor)
-{
-	free(cursor->pos);
-	mlx_get_mouse_pos(fractol->window, &(cursor->x), &(cursor->y));
-	cursor->pos = from_mlx_to_complex(cursor->x, cursor->y, fractol);
-} */
-
-/* void	zoom_hook(double xdelta, double ydelta, void *param)
-{
-	t_fractol	*fractol;
-
-	fractol = (t_fractol *) param;
-	store_cursor_position(fractol, fractol->cursor->before_zoom);
-	if (ydelta > 0)
-	{
-		fractol->zoom->type = OUT;
-		fractol->zoom->value = fractol->zoom->value / ZOOM_FACTOR;
-		fractol->zoom->shift = 1 + fractol->zoom->shift * ZOOM_FACTOR;
-	}
-	else if (ydelta < 0)
-	{
-		fractol->zoom->type = IN;
-		fractol->zoom->value = fractol->zoom->value * ZOOM_FACTOR;
-		fractol->zoom->shift = (fractol->zoom->shift - 1) / ZOOM_FACTOR;
-	}
-	store_cursor_position(fractol, fractol->cursor->after_zoom);
-	color_fractal(fractol);
-	(void) xdelta;
-	(void) xdelta;
-} */
 
 /* handling arrow keys & escape button movements */
 void ft_keys(void* param)
@@ -324,24 +142,7 @@ void ft_keys(void* param)
 	if (mlx_is_key_down(fractol->window, MLX_KEY_RIGHT))
 		image->instances[0].x += 5;
 }
-/* 
-static void	set_hooks_and_loops(t_fractol *fractol)
-{
-	color_fractal(fractol);
-	//mlx_scroll_hook(fractol->window, &zoom_hook, fractol);
-	//mlx_loop_hook(fractol->window, keys_hook, fractol);
-	mlx_resize_hook(fractol->window, 0, 0); //NULL NULL
-	mlx_loop(fractol->window);
-	mlx_terminate(fractol->window);
-	//free_all(fractol);
-}
 
-void	ft_error(void)
-{
-	printf("%s", mlx_strerror(mlx_errno));
-	exit(EXIT_FAILURE);
-}
- */
 static	t_fractol	*initialize_fractol()//double x, double y
 {
 	t_fractol	*fractol;
