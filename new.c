@@ -101,7 +101,7 @@ void mandelbrot_algo(t_fractol *fractol)
 
 			double Z_re = c_re, Z_im = c_im;
 			n = 0;
-			while(n<ITERATIONS)  //after this loop we get value between 0 and max iter
+			while(n < ITERATIONS)  //after this loop we get value between 0 and max iter
 			{
 				double Z_re2 = Z_re*Z_re, Z_im2 = Z_im*Z_im;
 				if(Z_re2 + Z_im2 > 4)
@@ -110,17 +110,15 @@ void mandelbrot_algo(t_fractol *fractol)
 				Z_re = Z_re2 - Z_im2 + c_re;
 				n++;
 			}
-			if (n < ITERATIONS && n > 0)
+			if (n < ITERATIONS)
 			{
 				int i = n % 16;
-				color = (n < 16) ? color_map[n] : 0x000000;
+				//color = (n < 16) ? color_map[n] : 0x000000;
+				color = ft_pixel(n * 14, n * 7, n * 7, 42);
 				mlx_put_pixel(fractol->image, x, y, color);
 			}
 			else 
-				{
-					mlx_put_pixel(fractol->image, x, y, ft_pixel(0, 0, 0, 1));
-					printf("black");
-				}
+				mlx_put_pixel(fractol->image, x, y, ft_pixel(0, 0, 0, 42));
 		}
 	}
 }
