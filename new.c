@@ -46,41 +46,6 @@ t_cpx	*move_fractol(t_cpx *num, t_fractol *fractol)
 	return (num);
 }
 
-int mandelbrot(double cr, double ci)
-{
-    int i;
-    double zr = 0.0, zi = 0.0, zr_new;
-
-    for (i = 0; i < 1000; i++)
-    {
-        zr_new = zr * zr - zi * zi + cr;
-        zi = 2.0 * zr * zi + ci;
-        zr = zr_new;
-        if (zr * zr + zi * zi > 4.0)
-            return (i);
-    }
-    return (0);
-}
-
-static int32_t color_map[16] = {
-    0x421E0F,
-	0x19071A,
-	0x09012F,
-	0x040449,
-	0x000764,
-	0x0C2C8A,
-	0x1852B1,
-	0x397DD1,
-	0x86B5E5,
-	0xD3ECF8,
-	0xF1E9BF,
-	0xF8C95F,
-	0xFFAA00,
-	0xCC8000,
-	0x995700,
-	0x6A3403,
-};
-
 void mandelbrot_algo(t_fractol *fractol)
 {
 	double MinRe = -4.2;
@@ -113,7 +78,6 @@ void mandelbrot_algo(t_fractol *fractol)
 			if (n < ITERATIONS)
 			{
 				int i = n % 16;
-				//color = (n < 16) ? color_map[n] : 0x000000;
 				color = ft_pixel(n * 14, n * 7, n * 7, 42);
 				mlx_put_pixel(fractol->image, x, y, color);
 			}
@@ -141,6 +105,63 @@ void ft_keys(void* param)
 		image->instances[0].x += 5;
 }
 
+t_cpx	*from_mlx_to_complex(double x, double y, t_fractol *fractol)
+{
+	t_cpx	*num;
+
+	num = malloc (sizeof(t_cpx));
+	if (num == NULL)
+		return (NULL);
+	num->real = (-1 + 2 * (x / WIDTH)) * WIDTH / HEIGHT * fractol->zoom->value;
+	num->imag = (1 - 2 * (y / HEIGHT)) * fractol->zoom->value;
+	return (num);
+}
+
+void	store_cursor_position(t_fractol *fractol, t_point *cursor)
+{
+	free(cursor->pos);
+	mlx_get_mouse_pos(fractol->window, &(cursor->x), &(cursor->y));
+	//cursor->pos = from_mlx_to_complex(cursor->x, cursor->y, fractol); 
+	//! How can I solve this??
+}
+
+void	zoom_hook(double xdelta, double ydelta, void *param)
+{
+	t_fractol	*fractol;
+
+	fractol = (t_fractol *) param;
+	store_cursor_position(fractol, fractol->cursor->before_zoom);
+	if (ydelta > 0)
+	{
+		fractol->zoom->type = OUT;
+		fractol->zoom->value = fractol->zoom->value / ZOOM_FACTOR;
+		fractol->zoom->shift = 1 + fractol->zoom->shift * ZOOM_FACTOR;
+	}
+	else if (ydelta < 0)
+	{
+		fractol->zoom->type = IN;
+		fractol->zoom->value = fractol->zoom->value * ZOOM_FACTOR;
+		fractol->zoom->shift = (fractol->zoom->shift - 1) / ZOOM_FACTOR;
+	}
+	store_cursor_position(fractol, fractol->cursor->after_zoom);
+	//color_fractal(fractal);
+	(void) xdelta;
+	(void) xdelta;
+}
+
+t_zoom	*initialize_zoom(double value, double shift, bool type)
+{
+	t_zoom		*zoom;
+
+	zoom = malloc (sizeof(t_zoom));
+	if (zoom == NULL)
+		zoom = NULL;
+	zoom->value = value;
+	zoom->shift = shift;
+	zoom->type = type;
+	return (zoom);
+}
+
 static	t_fractol	*initialize_fractol()//double x, double y
 {
 	t_fractol	*fractol;
@@ -151,17 +172,25 @@ static	t_fractol	*initialize_fractol()//double x, double y
 	fractol->window = mlx_init(WIDTH, HEIGHT, "fractol", true);
 	fractol->image = mlx_new_image(fractol->window, WIDTH, HEIGHT);
 	mlx_image_to_window(fractol->window, fractol->image, 0, 0);
+	fractol->zoom = initialize_zoom(1, 0, START); //!ZOOM
 	mandelbrot_algo(fractol);
+	mlx_scroll_hook(fractol->window, &zoom_hook, fractol); //!ZOOM
 	mlx_loop_hook(fractol->window, ft_keys, fractol); //resposible for key movements
+	//mlx_resize_hook(fractol->window, ft_resize, fractol);
 	mlx_loop(fractol->window); //keeps the window open until its closed by the user
 	mlx_terminate(fractol->window);
 	return (fractol);
 }
+
+//typedef void (*mlx_resizefunc)(int32_t width, int32_t height, void* param);
+//void mlx_resize_hook(mlx_t* mlx, mlx_resizefunc func, void* param);
 
 int main() //int ac, char **av
 {
 	t_fractol	*fractol;
 
 	fractol = initialize_fractol();
+	if (fractol == NULL)
+		return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);
 }
