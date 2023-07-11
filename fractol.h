@@ -16,21 +16,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include "./MLX42/include/MLX42/MLX42.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
 #include <complex.h>
 #include <math.h>
-//#define NULL 0
 #include <stddef.h>
+#include "./MLX42/include/MLX42/MLX42.h"
 
+/* defines the size of the window */
 #define WIDTH 1920
-#define HEIGHT 995
-#define ITERATIONS 30
+#define HEIGHT 980
+
+#define ITERATIONS 100
 #define ZOOM_FACTOR 0.7
+
+/* parameters for zooming in and out */
 #define IN 0
 #define OUT 1
+
 #define START 2
 
 typedef struct s_complex

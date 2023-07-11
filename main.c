@@ -53,31 +53,45 @@ void	ft_colouring(t_fractol *fractol, unsigned n, unsigned x, unsigned y)
 	if (n < ITERATIONS)
 			{
 				int i = n % 16;
-				color = ft_pixel(n * 14, n * 7, n * 7, 42);
+				color = ft_pixel(n * 42, n * 84, n * 21, 84);
 				mlx_put_pixel(fractol->image, x, y, color);
 			}
-			else 
-				mlx_put_pixel(fractol->image, x, y, ft_pixel(0, 0, 0, 42));
+	else 
+		mlx_put_pixel(fractol->image, x, y, ft_pixel(0, 0, 0, 42));
 }
 
-/* MinRe, MaxRe, MinIm, MaxIm: defining boundaries, MaxIm is calculated based on the screen ratio, to avoid
+/* MinRe, MaxRe: defining the min & max values for the real & imaginary parts
+, MinIm, MaxIm: defining boundaries, MaxIm is calculated based on the screen ratio, to avoid
 image distortion when the display window isn't a square
 Re_factor & Im_factor: used to map screen coordinates to complex numbers, calculated
-by dividing the lenght of the rectangle with the screen width */
+by dividing the lenght of the rectangle with the screen width, this is
+essentially to calculate the step size between consectutive pixels  */
 void mandelbrot_algo(t_fractol *fractol)
 {
-	double MinRe = -4.2;
-	double MaxRe = 1.5;
-	double MinIm = -1.5;
-	double MaxIm = MinIm+(MaxRe-MinRe)*HEIGHT/WIDTH;
-	double Re_factor = (MaxRe-MinRe)/(WIDTH-1);
-	double Im_factor = (MaxIm-MinIm)/(HEIGHT-1);
-	unsigned n=0;
+	double MinRe;
+	double MaxRe;
+	double MinIm;
+	double MaxIm;
+	double Re_factor;
+	double Im_factor;
+	unsigned n;
+	unsigned y;
+	unsigned x;
 
-	for(unsigned y=0; y<HEIGHT; ++y)
+	MinRe = -4.2;
+	MaxRe = 1.5;
+	MinIm = -1.5;
+	MaxIm = MinIm + (MaxRe-MinRe) * HEIGHT / WIDTH;
+	Re_factor = (MaxRe-MinRe) / (WIDTH - 1);
+	Im_factor = (MaxIm - MinIm) / (HEIGHT - 1);
+	n = 0;
+	y = 0;
+
+	while (y < HEIGHT)
 	{
 		double c_im = MaxIm - y*Im_factor;
-		for(unsigned x=0; x<WIDTH; ++x)
+		x = 0;
+		while (x < WIDTH)
 		{
 			double c_re = MinRe + x*Re_factor;
 
@@ -93,28 +107,24 @@ void mandelbrot_algo(t_fractol *fractol)
 				n++;
 			}
 			ft_colouring(fractol, n, x, y);
+			++x;
 		}
+		++y;
 	}
 }
 
 /* handling arrow keys & escape button movements */
-void ft_keys(void* param)
+void ft_escape_key(void* param)
 {
 	t_fractol	*fractol;
 
 	fractol = (t_fractol *) param;
 	if (mlx_is_key_down(fractol->window, MLX_KEY_ESCAPE))
 		mlx_close_window(fractol->window);
-	if (mlx_is_key_down(fractol->window, MLX_KEY_UP))
-		image->instances[0].y -= 5;
-	if (mlx_is_key_down(fractol->window, MLX_KEY_DOWN))
-		image->instances[0].y += 5;
-	if (mlx_is_key_down(fractol->window, MLX_KEY_LEFT))
-		image->instances[0].x -= 5;
-	if (mlx_is_key_down(fractol->window, MLX_KEY_RIGHT))
-		image->instances[0].x += 5;
 }
 
+/* responsible for converting the mouse coordinates (x and y) to 
+complex number coordinates based on the window dimensions and the zoom value*/
 t_cpx	*from_mlx_to_complex(double x, double y, t_fractol *fractol)
 {
 	t_cpx	*num;
@@ -127,6 +137,11 @@ t_cpx	*from_mlx_to_complex(double x, double y, t_fractol *fractol)
 	return (num);
 }
 
+//check what happens if mouse is outside of the window
+//passing the address of the cursor variable to allow the mlx function
+//to modify the value directly at the memory location
+/* responsible for updating the cursor position based on the mouse 
+coordinates retrieved from the mlx_get_mouse_pos function*/
 void	store_cursor_position(t_fractol *fractol, t_point *cursor)
 {
 	free(cursor->pos);
@@ -134,29 +149,117 @@ void	store_cursor_position(t_fractol *fractol, t_point *cursor)
 	cursor->pos = from_mlx_to_complex(cursor->x, cursor->y, fractol); 
 }
 
+t_cpx	*initialize_complex(double real, double imag)
+{
+	t_cpx	*compl;
+
+	compl = malloc (sizeof(t_cpx));
+	if (compl == NULL)
+		return (NULL);
+	compl->real = real;
+	compl->imag = imag;
+	return (compl);
+}
+
+int	check_stability(t_cpx *z, t_cpx *c)
+{
+	t_cpx	*tmp;
+	int			i;
+
+	tmp = malloc (sizeof(t_cpx));
+	if (tmp == NULL)
+		return (0);
+	i = 0;
+	while (i < ITERATIONS)
+	{
+		tmp->real = (z->real * z->real - z->imag * z->imag) + c->real;
+		tmp->imag = (2 * z->real * z->imag) + c->imag;
+		z->real = tmp->real;
+		z->imag = tmp->imag;
+		if (z->real == INFINITY || z->imag == INFINITY
+			|| !(z->real == z->real) || !(z->imag == z->imag))
+		{
+			free(tmp);
+			return (i);
+		}
+		i++;
+	}
+	free(tmp);
+	return (i);
+}
+
+int	create_set(double x, double y, t_fractol *fractol)
+{
+	t_cpx	*z;
+	t_cpx	*c;
+	int			iterations;
+
+		c = from_mlx_to_complex(x, y, fractol);
+		c = move_fractol(c, fractol);
+		z = initialize_complex(0, 0);
+	iterations = check_stability(z, c);
+	free(z);
+	free(c);
+	return (iterations);
+}
+
+uint32_t	color_set(double x, double y, t_fractol *fractol)
+{
+	int			iter;
+	uint32_t	color;
+
+	iter = create_set(x, y, fractol);
+	if (iter < ITERATIONS)
+		color = ft_pixel(iter * 4, iter * 2, iter * 3, 58);
+	else
+		color = ft_pixel(0, 0, 0, 58);
+	return (color);
+}
+
+void	color_fractol(t_fractol *fractol)
+{
+	int				x;
+	int				y;
+	uint32_t		color;
+
+	x = 0;
+	while (x < WIDTH)
+	{
+		y = 0;
+		while (y < HEIGHT)
+		{
+			color = color_set(x, y, fractol);
+			mlx_put_pixel(fractol->image, x, y, color);
+			y++;
+		}
+		x++;
+	}
+}
+
+/* function checks the value of ydelta to determine whether the zoom should
+ be performed in or out*/
 void	zoom_hook(double xdelta, double ydelta, void *param)
 {
 	t_fractol	*fractol;
 
+	(void) xdelta;
 	fractol = (t_fractol *) param;
 	store_cursor_position(fractol, fractol->cursor->before_zoom);
 	if (ydelta > 0)
 	{
 		fractol->zoom->type = OUT;
-		fractol->zoom->value /= ZOOM_FACTOR;
-		fractol->zoom->shift *= ZOOM_FACTOR;
+		fractol->zoom->value = fractol->zoom->value / ZOOM_FACTOR;
+		fractol->zoom->shift = 1 + fractol->zoom->shift * ZOOM_FACTOR;
 	}
 	else if (ydelta < 0)
 	{
 		fractol->zoom->type = IN;
-		fractol->zoom->value *= ZOOM_FACTOR;
-		fractol->zoom->shift /= ZOOM_FACTOR;
+		fractol->zoom->value = fractol->zoom->value * ZOOM_FACTOR;
+		fractol->zoom->shift = (fractol->zoom->shift - 1) / ZOOM_FACTOR;
 	}
 	store_cursor_position(fractol, fractol->cursor->after_zoom);
-	//color_fractol(fractol);
-	mandelbrot_algo(fractol); //! this should just colour it
-	(void) xdelta;
-	(void) xdelta;
+	color_fractol(fractol);
+	//mandelbrot_algo(fractol); //! this should just colour it
 }
 
 t_zoom	*initialize_zoom(double value, double shift, bool type)
@@ -172,18 +275,6 @@ t_zoom	*initialize_zoom(double value, double shift, bool type)
 	return (zoom);
 }
 
-t_cpx	*initialize_complex(double real, double imag)
-{
-	t_cpx	*compl;
-
-	compl = malloc (sizeof(t_cpx));
-	if (compl == NULL)
-		return (NULL);
-	compl->real = real;
-	compl->imag = imag;
-	return (compl);
-}
-
 t_point	*initialize_point(double real, double imag)
 {
 	t_point		*point;
@@ -195,6 +286,7 @@ t_point	*initialize_point(double real, double imag)
 	return (point);
 }
 
+//? why (0,0) -> because it"s only initialization and values are set later
 t_cursor	*initialize_cursor(void)
 {
 	t_cursor		*cursor;
@@ -221,7 +313,7 @@ static	t_fractol	*initialize_fractol()//double x, double y
 	fractol->cursor = initialize_cursor();
 	mandelbrot_algo(fractol);
 	mlx_scroll_hook(fractol->window, &zoom_hook, fractol); //!ZOOM
-	mlx_loop_hook(fractol->window, ft_keys, fractol); //resposible for key movements
+	mlx_loop_hook(fractol->window, ft_escape_key, fractol); //resposible for key movements
 	//mlx_resize_hook(fractol->window, ft_resize, fractol);
 	mlx_loop(fractol->window); //keeps the window open until its closed by the user
 	mlx_terminate(fractol->window);
