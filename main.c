@@ -210,7 +210,7 @@ uint32_t	color_set(double x, double y, t_fractol *fractol)
 
 	iter = create_set(x, y, fractol);
 	if (iter < ITERATIONS)
-		color = ft_pixel(iter * 4, iter * 2, iter * 3, 58);
+		color = ft_pixel(iter * 42, iter * 84, iter * 21, 84);
 	else
 		color = ft_pixel(0, 0, 0, 58);
 	return (color);
@@ -258,7 +258,7 @@ void	zoom_hook(double xdelta, double ydelta, void *param)
 		fractol->zoom->shift = (fractol->zoom->shift - 1) / ZOOM_FACTOR;
 	}
 	store_cursor_position(fractol, fractol->cursor->after_zoom);
-	color_fractol(fractol);
+	color_fractol(fractol); //! I need to exchange this loop with mine!
 	//mandelbrot_algo(fractol); //! this should just colour it
 }
 
