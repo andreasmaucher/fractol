@@ -60,6 +60,10 @@ void	ft_colouring(t_fractol *fractol, unsigned n, unsigned x, unsigned y)
 				mlx_put_pixel(fractol->image, x, y, ft_pixel(0, 0, 0, 42));
 }
 
+/* MinRe, MaxRe, MinIm, MaxIm: defining boundaries, MaxIm is calculated based on the screen ratio, to avoid
+image distortion when the display window isn't a square
+Re_factor & Im_factor: used to map screen coordinates to complex numbers, calculated
+by dividing the lenght of the rectangle with the screen width */
 void mandelbrot_algo(t_fractol *fractol)
 {
 	double MinRe = -4.2;
@@ -128,7 +132,6 @@ void	store_cursor_position(t_fractol *fractol, t_point *cursor)
 	free(cursor->pos);
 	mlx_get_mouse_pos(fractol->window, &(cursor->x), &(cursor->y));
 	cursor->pos = from_mlx_to_complex(cursor->x, cursor->y, fractol); 
-	//! How can I solve this??
 }
 
 void	zoom_hook(double xdelta, double ydelta, void *param)
@@ -140,17 +143,18 @@ void	zoom_hook(double xdelta, double ydelta, void *param)
 	if (ydelta > 0)
 	{
 		fractol->zoom->type = OUT;
-		fractol->zoom->value = fractol->zoom->value / ZOOM_FACTOR;
-		fractol->zoom->shift = 1 + fractol->zoom->shift * ZOOM_FACTOR;
+		fractol->zoom->value /= ZOOM_FACTOR;
+		fractol->zoom->shift *= ZOOM_FACTOR;
 	}
 	else if (ydelta < 0)
 	{
 		fractol->zoom->type = IN;
-		fractol->zoom->value = fractol->zoom->value * ZOOM_FACTOR;
-		fractol->zoom->shift = (fractol->zoom->shift - 1) / ZOOM_FACTOR;
+		fractol->zoom->value *= ZOOM_FACTOR;
+		fractol->zoom->shift /= ZOOM_FACTOR;
 	}
 	store_cursor_position(fractol, fractol->cursor->after_zoom);
-	//color_fractal(fractal);
+	//color_fractol(fractol);
+	mandelbrot_algo(fractol); //! this should just colour it
 	(void) xdelta;
 	(void) xdelta;
 }
