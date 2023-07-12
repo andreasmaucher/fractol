@@ -19,6 +19,7 @@
 #include <complex.h>
 #include <math.h>
 #include <stddef.h>
+#include <string.h>
 #include "./MLX42/include/MLX42/MLX42.h"
 
 /* defines the size of the window */
@@ -82,6 +83,8 @@ typedef struct s_fractol
 	t_set			*set;
 	t_zoom		*zoom;
 	t_cursor	*cursor;
+	int			mandelbrot;
+	char		*julia;
 }			t_fractol;
 
 #endif

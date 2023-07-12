@@ -153,6 +153,7 @@ void	store_cursor_position(t_fractol *fractol, t_point *cursor)
 	cursor->pos = from_mlx_to_complex(cursor->x, cursor->y, fractol); 
 }
 
+//! change for Julia real + imag
 t_cpx	*initialize_complex(double real, double imag)
 {
 	t_cpx	*compl;
@@ -165,6 +166,7 @@ t_cpx	*initialize_complex(double real, double imag)
 	return (compl);
 }
 
+//! do I need to make changes here for Julia?!
 int	check_stability(t_cpx *z, t_cpx *c)
 {
 	t_cpx	*tmp;
@@ -192,6 +194,32 @@ int	check_stability(t_cpx *z, t_cpx *c)
 	return (i);
 }
 
+//! add extra if function for Julia
+int	create_set(double x, double y, t_fractol *fractol)
+{
+	t_cpx	*z;
+	t_cpx	*c;
+	int			iterations;
+
+	//if (fractol->mandelbrot == 1)
+	{
+		c = from_mlx_to_complex(x, y, fractol);
+		c = move_fractol(c, fractol);
+		z = initialize_complex(0, 0);
+	}
+	/* else
+	{
+		z = from_mlx_to_complex(x, y, fractol);
+		z = move_fractol(z, fractol);
+		c = initialize_complex(fractol->set->origin->real,
+				fractol->set->origin->imag);
+	} */
+	iterations = check_stability(z, c);
+	free(z);
+	free(c);
+	return (iterations);
+}
+/* 
 int	create_set(double x, double y, t_fractol *fractol)
 {
 	t_cpx	*z;
@@ -206,7 +234,7 @@ int	create_set(double x, double y, t_fractol *fractol)
 	free(c);
 	return (iterations);
 }
-
+ */
 uint32_t	color_set(double x, double y, t_fractol *fractol)
 {
 	int			iter;
@@ -327,12 +355,28 @@ static	t_fractol	*initialize_fractol()//double x, double y
 //typedef void (*mlx_resizefunc)(int32_t width, int32_t height, void* param);
 //void mlx_resize_hook(mlx_t* mlx, mlx_resizefunc func, void* param);
 
-int main() //int ac, char **av
+int main(int ac, char **av)
 {
 	t_fractol	*fractol;
 
-	fractol = initialize_fractol();
-	if (fractol == NULL)
-		return (EXIT_FAILURE);
-	return (EXIT_SUCCESS);
+	if (ac == 2)
+	{
+		if (strncmp(av[1], "Mandelbrot", 10) == 0 || strncmp(av[1], "mandelbrot", 10) == 0) // || av[2] == "mandelbrot")
+		{
+			//fractol->mandelbrot = 1;
+			fractol = initialize_fractol();
+			if (fractol == NULL)
+				return (EXIT_FAILURE);
+		}
+	}
+	/* else if (ac == 4)
+	{
+
+	}
+	else
+		{
+			input_instructions();
+			return (EXIT_FAILURE);
+		} */
+	return (EXIT_SUCCESS); //can I leave it here?!
 }
