@@ -25,8 +25,8 @@
 #define WIDTH 1920
 #define HEIGHT 980
 
-#define ITERATIONS 42
-#define ZOOM_FACTOR 0.7
+#define ITERATIONS 142 //142 is good
+#define ZOOM_FACTOR 0.69
 
 /* parameters for zooming in and out */
 #define IN 0

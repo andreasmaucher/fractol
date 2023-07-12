@@ -16,7 +16,7 @@ LIBMLX	:= ./MLX42
 
 HEADERS	:= -I ./include -I $(LIBMLX)/include
 LIBS	:= $(LIBMLX)/build/libmlx42.a -ldl -lglfw -pthread -lm
-SRCS	:= main.c
+SRCS	:= main.c color.c initialization.c math.c zoom.c
 OBJS	:= ${SRCS:.c=.o}
 
 all: libmlx $(NAME)

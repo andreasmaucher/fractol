@@ -13,7 +13,6 @@
 #include "fractol.h"
 
 static mlx_image_t* image;
-static double zoom = 1.0;
 
 // -----------------------------------------------------------------------------
 
@@ -93,13 +92,18 @@ void mandelbrot_algo(t_fractol *fractol)
 		x = 0;
 		while (x < WIDTH)
 		{
-			double c_re = MinRe + x*Re_factor;
-
-			double Z_re = c_re, Z_im = c_im;
+			double c_re;
+			c_re = MinRe + x*Re_factor;
+			double Z_re;
+			Z_re = c_re;
+			double Z_im = c_im;
 			n = 0;
 			while(n < ITERATIONS)  //after this loop we get value between 0 and max iter
 			{
-				double Z_re2 = Z_re*Z_re, Z_im2 = Z_im*Z_im;
+				double Z_re2; //a*a
+				Z_re2 = Z_re*Z_re; //a*a
+				double Z_im2; //b*b
+				Z_im2 = Z_im*Z_im;
 				if(Z_re2 + Z_im2 > 4)
 					break;
 				Z_im = 2*Z_re*Z_im + c_im;
