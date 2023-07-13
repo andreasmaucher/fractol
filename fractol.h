@@ -84,9 +84,9 @@ typedef struct s_fractol
 	t_zoom		*zoom;
 	t_cursor	*cursor;
 	int			mandelbrot;
-	char		*julia;
-	int			julia_i;
-	int			julia_r;
+	int			julia;
+	double			julia_i;
+	double			julia_r;
 }			t_fractol;
 
 void	zoom_hook(double xdelta, double ydelta, void *param);

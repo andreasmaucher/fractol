@@ -79,13 +79,18 @@ void mandelbrot_algo(t_fractol *fractol)
 				Z_im2 = Z_im*Z_im;
 				if(Z_re2 + Z_im2 > 4)
 					break;
-				if (fractol->mandelbrot != 1)
+				/* if (fractol->julia == 1)
 				{
 					c_im = fractol->julia_i;
+					//printf("%f", c_im);
 					c_re = fractol->julia_r;
-				}
-				Z_im = 2*Z_re*Z_im + c_im;
-				Z_re = Z_re2 - Z_im2 + c_re;
+					//printf("%f", c_re);
+				} */
+				//!whenever the if loop runs, I get problems,
+				//!maybe best to take it out and make one if loop
+				//!for mandel and one for julia
+				Z_im = 2*Z_re*Z_im + 0.01; //c_im
+				Z_re = Z_re2 - Z_im2 + -0.285; //c_re
 				n++;
 			}
 			ft_colouring(fractol, n, x, y);
@@ -246,8 +251,11 @@ int main(int ac, char **av)
 	}
 	else if (ac == 4) //!needs an additional check if parameters are valid!
 	{
-		fractol->julia_r = atoi(av[2]); //! take my own atoi
-		fractol->julia_i = atoi(av[3]);
+		fractol->julia = 1;
+		fractol->julia_r = atof(av[2]); //! take my own atoi
+		//printf("%f", fractol->julia_r);
+		fractol->julia_i = atof(av[3]);
+		//printf("%f", fractol->julia_i);
 		fractol = initialize_fractol(fractol);
 			if (fractol == NULL)
 				return (EXIT_FAILURE);
