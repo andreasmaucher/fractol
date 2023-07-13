@@ -26,7 +26,7 @@
 #define WIDTH 1920
 #define HEIGHT 980
 
-#define ITERATIONS 142 //142 is good
+#define ITERATIONS 142 //142 is good, 420 also works
 #define ZOOM_FACTOR 0.69
 
 /* parameters for zooming in and out */
@@ -86,5 +86,25 @@ typedef struct s_fractol
 	int			mandelbrot;
 	char		*julia;
 }			t_fractol;
+
+void	zoom_hook(double xdelta, double ydelta, void *param);
+void ft_escape_key(void* param);
+t_cpx	*initialize_complex(double real, double imag);
+t_zoom	*initialize_zoom(double value, double shift, bool type);
+t_cursor	*initialize_cursor(void);
+t_point	*initialize_point(double real, double imag);
+
+/*zoom*/
+t_cpx	*move_fractol(t_cpx *num, t_fractol *fractol);
+void	store_cursor_position(t_fractol *fractol, t_point *cursor);
+int	check_stability(t_cpx *z, t_cpx *c);
+void	zoom_hook(double xdelta, double ydelta, void *param);
+
+/*math*/
+t_cpx	*from_mlx_to_complex(double x, double y, t_fractol *fractol);
+
+/*color*/
+void	color_fractol(t_fractol *fractol);
+
 
 #endif
