@@ -79,6 +79,11 @@ void mandelbrot_algo(t_fractol *fractol)
 				Z_im2 = Z_im*Z_im;
 				if(Z_re2 + Z_im2 > 4)
 					break;
+				if (fractol->mandelbrot != 1)
+				{
+					c_im = fractol->julia_i;
+					c_re = fractol->julia_r;
+				}
 				Z_im = 2*Z_re*Z_im + c_im;
 				Z_re = Z_re2 - Z_im2 + c_re;
 				n++;
@@ -144,8 +149,8 @@ int	create_set(double x, double y, t_fractol *fractol)
 	{
 		z = from_mlx_to_complex(x, y, fractol);
 		z = move_fractol(z, fractol);
-		c = initialize_complex(fractol->set->origin->real,
-				fractol->set->origin->imag);
+		c = initialize_complex(fractol->julia_r,
+				fractol->julia_i);
 	}
 	iterations = check_stability(z, c);
 	free(z);
@@ -226,24 +231,28 @@ int main(int ac, char **av)
 {
 	t_fractol	*fractol;
 
+	fractol = malloc (sizeof(t_fractol));
+		if (fractol == 0)
+			return (0);
 	if (ac == 2)
 	{
 		if (strncmp(av[1], "Mandelbrot", 10) == 0 || strncmp(av[1], "mandelbrot", 10) == 0) // || av[2] == "mandelbrot")
 		{
-			fractol = malloc (sizeof(t_fractol));
-			if (fractol == 0)
-				return (0);
 			fractol->mandelbrot = 1;
 			fractol = initialize_fractol(fractol);
 			if (fractol == NULL)
 				return (EXIT_FAILURE);
 		}
 	}
-	/* else if (ac == 4)
+	else if (ac == 4) //!needs an additional check if parameters are valid!
 	{
-		
+		fractol->julia_r = atoi(av[2]); //! take my own atoi
+		fractol->julia_i = atoi(av[3]);
+		fractol = initialize_fractol(fractol);
+			if (fractol == NULL)
+				return (EXIT_FAILURE);
 	}
-	else
+	/* else
 		{
 			input_instructions();
 			return (EXIT_FAILURE);

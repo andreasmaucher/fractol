@@ -10,33 +10,31 @@
 #                                                                              #
 # **************************************************************************** #
 
-NAME	:= a.out
-CFLAGS	:= -Wextra -Wall -Werror -Wunreachable-code -Ofast
-LIBMLX	:= ./MLX42
+NAME = fractol
+SOURCES = main.c zoom.c initialization.c
+//FT_PRINTF = ft_printf/ft_printf.a
+//LIBFT = libft/libft.a
+MLX42 = MLX42/build/libmlx42.a
+OBJS = $(SOURCES:.c=.o)
+INCLUDES = -I ft_printf/includes -I libft/includes -I MLX42/include
 
-HEADERS	:= -I ./include -I $(LIBMLX)/include
-LIBS	:= $(LIBMLX)/build/libmlx42.a -ldl -lglfw -pthread -lm
-SRCS	:= main.c color.c initialization.c math.c zoom.c
-OBJS	:= ${SRCS:.c=.o}
+CC = cc
+RM = rm -f
+CFLAGS = -Wall -Wextra -Werror
+MLXFLAGS = -ldl -lglfw -pthread -lm
 
-all: libmlx $(NAME)
+all: $(NAME)	
 
-libmlx:
-	@cmake $(LIBMLX) -B $(LIBMLX)/build && make -C $(LIBMLX)/build -j4
+$(NAME): $(MLX42) $(OBJS)
+	$(CC) $(CFLAGS) $(OBJS) $(MLX42) $(MLXFLAGS) $(INCLUDES) -o $(NAME)
 
-%.o: %.c
-	@$(CC) $(CFLAGS) -o $@ -c $< $(HEADERS) && printf "Compiling: $(notdir $<)"
-
-$(NAME): $(OBJS)
-	@$(CC) $(OBJS) $(LIBS) $(HEADERS) -o $(NAME)
+$(MLX42):
+	make -C MLX42
 
 clean:
-	@rm -f $(OBJS)
-	@rm -f $(LIBMLX)/build
+	$(RM) $(OBJS)
 
 fclean: clean
-	@rm -f $(NAME)
+	$(RM) $(NAME)
 
-re: clean all
-
-.PHONY: all, clean, fclean, re, libmlx
+re: fclean $(NAME)
