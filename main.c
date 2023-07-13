@@ -134,19 +134,19 @@ int	create_set(double x, double y, t_fractol *fractol)
 	t_cpx	*c;
 	int			iterations;
 
-	//if (fractol->mandelbrot == 1)
+	if (fractol->mandelbrot == 1)
 	{
 		c = from_mlx_to_complex(x, y, fractol);
 		c = move_fractol(c, fractol);
 		z = initialize_complex(0, 0);
 	}
-	/* else
+	else
 	{
 		z = from_mlx_to_complex(x, y, fractol);
 		z = move_fractol(z, fractol);
 		c = initialize_complex(fractol->set->origin->real,
 				fractol->set->origin->imag);
-	} */
+	}
 	iterations = check_stability(z, c);
 	free(z);
 	free(c);
@@ -206,13 +206,13 @@ static	t_fractol	*initialize_window(t_fractol *fractol)
 	return(fractol);
 }
 
-static	t_fractol	*initialize_fractol()//double x, double y
+static	t_fractol	*initialize_fractol(t_fractol *fractol)//double x, double y
 {
-	t_fractol	*fractol;
+	//t_fractol	*fractol;
 
-	fractol = malloc (sizeof(t_fractol));
+	/* fractol = malloc (sizeof(t_fractol));
 	if (fractol == 0)
-		return (0);
+		return (0); */
 	initialize_window(fractol);
 	mandelbrot_algo(fractol);
 	setup_hooks(fractol);
@@ -230,15 +230,18 @@ int main(int ac, char **av)
 	{
 		if (strncmp(av[1], "Mandelbrot", 10) == 0 || strncmp(av[1], "mandelbrot", 10) == 0) // || av[2] == "mandelbrot")
 		{
-			//fractol->mandelbrot = 1;
-			fractol = initialize_fractol();
+			fractol = malloc (sizeof(t_fractol));
+			if (fractol == 0)
+				return (0);
+			fractol->mandelbrot = 1;
+			fractol = initialize_fractol(fractol);
 			if (fractol == NULL)
 				return (EXIT_FAILURE);
 		}
 	}
 	/* else if (ac == 4)
 	{
-
+		
 	}
 	else
 		{
