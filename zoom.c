@@ -12,7 +12,7 @@
 
 #include "fractol.h"
 
-t_cpx	*move_fractol(t_cpx *num, t_fractol *fractol)
+t_cpx	*zoom_fractol(t_cpx *num, t_fractol *fractol)
 {
 	double	diff_x;
 	double	diff_y;

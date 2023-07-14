@@ -33,8 +33,6 @@
 #define IN 0
 #define OUT 1
 
-#define START 2
-
 typedef struct s_complex
 {
 	double	real;
@@ -54,18 +52,11 @@ typedef struct s_cursor
 	t_point	*after_zoom;
 }	t_cursor;
 
-typedef struct s_set
-{
-	char		*type;
-	t_cpx		*origin;
-}	t_set;
-
 typedef struct s_fractol
 {
 	mlx_t		*window;
 	mlx_image_t	*image;
 	t_cpx		*origin;
-	t_set			*set;
 	t_cursor	*cursor;
 	int			mandelbrot;
 	double			julia_i;
@@ -82,7 +73,7 @@ t_cursor	*initialize_cursor(void);
 t_point	*initialize_point(double real, double imag);
 
 /*zoom*/
-t_cpx	*move_fractol(t_cpx *num, t_fractol *fractol);
+t_cpx	*zoom_fractol(t_cpx *num, t_fractol *fractol);
 void	store_cursor_position(t_fractol *fractol, t_point *cursor);
 int	check_stability(t_cpx *z, t_cpx *c);
 void	zoom_hook(double xdelta, double ydelta, void *param);

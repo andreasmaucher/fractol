@@ -12,6 +12,18 @@
 
 #include "fractol.h"
 
+t_cpx	*initialization_cpx(double real, double imag)
+{
+	t_cpx	*cpx;
+
+	cpx = malloc (sizeof(t_cpx));
+	if (cpx == NULL)
+		return (NULL);
+	cpx->real = real;
+	cpx->imag = imag;
+	return (cpx);
+}
+
 t_point	*initialize_point(double real, double imag)
 {
 	t_point		*point;

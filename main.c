@@ -78,20 +78,7 @@ void mandelbrot_algo(t_fractol *fractol)
 	}
 }
 
-t_cpx	*initialization_cpx(double real, double imag)
-{
-	t_cpx	*cpx;
-
-	cpx = malloc (sizeof(t_cpx));
-	if (cpx == NULL)
-		return (NULL);
-	cpx->real = real;
-	cpx->imag = imag;
-	return (cpx);
-}
-
-//! add extra if function for Julia
-int	create_set(double x, double y, t_fractol *fractol)
+int	create_fractol(double x, double y, t_fractol *fractol)
 {
 	t_cpx	*z;
 	t_cpx	*c;
@@ -100,19 +87,19 @@ int	create_set(double x, double y, t_fractol *fractol)
 	if (fractol->mandelbrot == 1)
 	{
 		c = complex_n_conversion(x, y, fractol);
-		c = move_fractol(c, fractol);
+		c = zoom_fractol(c, fractol);
 		z = initialization_cpx(0, 0);
 	}
 	else
 	{
 		z = complex_n_conversion(x, y, fractol);
-		z = move_fractol(z, fractol);
+		z = zoom_fractol(z, fractol);
 		c = initialization_cpx(fractol->julia_r,
 				fractol->julia_i);
 	}
 	iterations = check_stability(z, c);
-	free(z);
-	free(c);
+	//free(z); //!neded?!?!?
+	//free(c);
 	return (iterations);
 }
 
@@ -121,7 +108,7 @@ uint32_t	color_set(double x, double y, t_fractol *fractol)
 	int			iter;
 	uint32_t	color;
 
-	iter = create_set(x, y, fractol);
+	iter = create_fractol(x, y, fractol);
 	if (iter < ITERATIONS)
 		color = ft_pixel(iter * 42, iter * 84, iter * 21, 84);
 	else
@@ -159,7 +146,8 @@ static	t_fractol	*setup_hooks(t_fractol *fractol)
 	return(fractol);
 }
 
-static	t_fractol	*initialize_window(t_fractol *fractol)
+//! error check mlx functions
+static	t_fractol	*initialize_fractol(t_fractol *fractol)//double x, double y
 {
 	fractol->window = mlx_init(WIDTH, HEIGHT, "fractol", true);
 	fractol->image = mlx_new_image(fractol->window, WIDTH, HEIGHT);
@@ -167,18 +155,7 @@ static	t_fractol	*initialize_window(t_fractol *fractol)
 	fractol->cursor = initialize_cursor();
 	fractol->value = 1;
 	fractol->shift = 0;
-	fractol->type = START;
-	return(fractol);
-}
-
-static	t_fractol	*initialize_fractol(t_fractol *fractol)//double x, double y
-{
-	//t_fractol	*fractol;
-
-	/* fractol = malloc (sizeof(t_fractol));
-	if (fractol == 0)
-		return (0); */
-	initialize_window(fractol);
+	fractol->type = 2;
 	mandelbrot_algo(fractol);
 	setup_hooks(fractol);
 	return (fractol);
