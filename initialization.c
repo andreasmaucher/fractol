@@ -12,19 +12,6 @@
 
 #include "fractol.h"
 
-t_zoom	*initialize_zoom(double value, double shift, bool type)
-{
-	t_zoom		*zoom;
-
-	zoom = malloc (sizeof(t_zoom));
-	if (zoom == NULL)
-		zoom = NULL;
-	zoom->value = value;
-	zoom->shift = shift;
-	zoom->type = type;
-	return (zoom);
-}
-
 t_point	*initialize_point(double real, double imag)
 {
 	t_point		*point;

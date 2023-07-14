@@ -164,8 +164,10 @@ static	t_fractol	*initialize_window(t_fractol *fractol)
 	fractol->window = mlx_init(WIDTH, HEIGHT, "fractol", true);
 	fractol->image = mlx_new_image(fractol->window, WIDTH, HEIGHT);
 	mlx_image_to_window(fractol->window, fractol->image, 0, 0);
-	fractol->zoom = initialize_zoom(1, 0, START); //!ZOOM
 	fractol->cursor = initialize_cursor();
+	fractol->value = 1;
+	fractol->shift = 0;
+	fractol->type = START;
 	return(fractol);
 }
 

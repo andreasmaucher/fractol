@@ -22,7 +22,7 @@ t_cpx	*complex_n_conversion(double x, double y, t_fractol *fractol)
 	n = malloc (sizeof(t_cpx));
 	if (n == NULL)
 		return (NULL);
-	n->real = (-1 + 2 * (x / WIDTH)) * WIDTH / HEIGHT * fractol->zoom->value;
-	n->imag = (1 - 2 * (y / HEIGHT)) * fractol->zoom->value;
+	n->real = (-1 + 2 * (x / WIDTH)) * WIDTH / HEIGHT * fractol->value;
+	n->imag = (1 - 2 * (y / HEIGHT)) * fractol->value;
 	return (n);
 }

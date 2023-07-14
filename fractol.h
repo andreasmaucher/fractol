@@ -35,25 +35,11 @@
 
 #define START 2
 
-/* typedef struct s_complex
+typedef struct s_complex
 {
 	double	real;
 	double	imag;
-}	        t_cpx; */
-
-struct color 
-{
-    unsigned char R;
-    unsigned char G;
-    unsigned char B;
-};
-
-typedef struct s_zoom
-{
-	double	value;
-	bool	type;
-	double	shift;
-}	t_zoom;
+}	        t_cpx;
 
 typedef struct s_point
 {
@@ -78,21 +64,20 @@ typedef struct s_fractol
 {
 	mlx_t		*window;
 	mlx_image_t	*image;
-	char		*type;
 	t_cpx		*origin;
 	t_set			*set;
-	t_zoom		*zoom;
 	t_cursor	*cursor;
 	int			mandelbrot;
 	double			julia_i;
 	double			julia_r;
-	double	real;
-	double	imag;
+	double	value;
+	bool	type;
+	double	shift;
 }			t_fractol;
 
 void	zoom_hook(double xdelta, double ydelta, void *param);
 t_cpx	*initialization_cpx(double real, double imag);
-t_zoom	*initialize_zoom(double value, double shift, bool type);
+t_fractol	*initialize_zoom(double value, double shift, bool type);
 t_cursor	*initialize_cursor(void);
 t_point	*initialize_point(double real, double imag);
 

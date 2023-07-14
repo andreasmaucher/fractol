@@ -21,15 +21,15 @@ t_cpx	*move_fractol(t_cpx *num, t_fractol *fractol)
 		- fractol->cursor->before_zoom->pos->real;
 	diff_y = fractol->cursor->after_zoom->pos->imag
 		- fractol->cursor->before_zoom->pos->imag;
-	if (fractol->zoom->type == IN)
+	if (fractol->type == IN)
 	{
-		num->real = num->real + (ZOOM_FACTOR * fractol->zoom->shift) * diff_x;
-		num->imag = num->imag + (ZOOM_FACTOR * fractol->zoom->shift) * diff_y;
+		num->real = num->real + (ZOOM_FACTOR * fractol->shift) * diff_x;
+		num->imag = num->imag + (ZOOM_FACTOR * fractol->shift) * diff_y;
 	}
-	else if (fractol->zoom->type == OUT)
+	else if (fractol->type == OUT)
 	{
-		num->real = num->real - fractol->zoom->shift * diff_x;
-		num->imag = num->imag - fractol->zoom->shift * diff_y;
+		num->real = num->real - fractol->shift * diff_x;
+		num->imag = num->imag - fractol->shift * diff_y;
 	}
 	return (num);
 }
@@ -85,15 +85,15 @@ void	zoom_hook(double xdelta, double ydelta, void *param)
 	store_cursor_position(fractol, fractol->cursor->before_zoom);
 	if (ydelta > 0)
 	{
-		fractol->zoom->type = OUT;
-		fractol->zoom->value = fractol->zoom->value / ZOOM_FACTOR;
-		fractol->zoom->shift = 1 + fractol->zoom->shift * ZOOM_FACTOR;
+		fractol->type = OUT;
+		fractol->value = fractol->value / ZOOM_FACTOR;
+		fractol->shift = 1 + fractol->shift * ZOOM_FACTOR;
 	}
 	else if (ydelta < 0)
 	{
-		fractol->zoom->type = IN;
-		fractol->zoom->value = fractol->zoom->value * ZOOM_FACTOR;
-		fractol->zoom->shift = (fractol->zoom->shift - 1) / ZOOM_FACTOR;
+		fractol->type = IN;
+		fractol->value = fractol->value * ZOOM_FACTOR;
+		fractol->shift = (fractol->shift - 1) / ZOOM_FACTOR;
 	}
 	store_cursor_position(fractol, fractol->cursor->after_zoom);
 	color_fractol(fractol); //! I need to exchange this loop with mine!
