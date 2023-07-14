@@ -32,7 +32,7 @@ t_point	*initialize_point(double real, double imag)
 	point = malloc (sizeof(t_point));
 	if (point == NULL)
 		point = NULL;
-	point->pos = initialize_complex(real, imag);
+	point->pos = initialization_cpx(real, imag);
 	return (point);
 }
 

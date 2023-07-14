@@ -12,26 +12,6 @@
 
 #include "fractol.h"
 
-int32_t ft_pixel(int32_t r, int32_t g, int32_t b, int32_t a)
-{
-    return (r << 24 | g << 16 | b << 8 | a);
-}
-
-// -----------------------------------------------------------------------------
-
-void	ft_colouring(t_fractol *fractol, unsigned n, unsigned x, unsigned y)
-{
-	uint32_t color;
-
-	if (n < ITERATIONS)
-			{
-				color = ft_pixel(n * 42, n * 84, n * 21, 84);
-				mlx_put_pixel(fractol->image, x, y, color);
-			}
-	else 
-		mlx_put_pixel(fractol->image, x, y, ft_pixel(0, 0, 0, 42));
-}
-
 /* MinRe, MaxRe: defining the min & max values for the real & imaginary parts
 , MinIm, MaxIm: defining boundaries, MaxIm is calculated based on the screen ratio, to avoid
 image distortion when the display window isn't a square
@@ -79,18 +59,16 @@ void mandelbrot_algo(t_fractol *fractol)
 				Z_im2 = Z_im*Z_im;
 				if(Z_re2 + Z_im2 > 4)
 					break;
-				/* if (fractol->julia == 1)
+				if (fractol->mandelbrot != 1)
 				{
-					c_im = fractol->julia_i;
-					//printf("%f", c_im);
-					c_re = fractol->julia_r;
-					//printf("%f", c_re);
-				} */
-				//!whenever the if loop runs, I get problems,
-				//!maybe best to take it out and make one if loop
-				//!for mandel and one for julia
-				Z_im = 2*Z_re*Z_im + 0.01; //c_im
-				Z_re = Z_re2 - Z_im2 + -0.285; //c_re
+					Z_im = 2*Z_re*Z_im + fractol->julia_i; //c_im
+					Z_re = Z_re2 - Z_im2 + fractol->julia_r; //c_re
+				}
+				else
+				{
+					Z_im = 2*Z_re*Z_im + c_im;
+					Z_re = Z_re2 - Z_im2 + c_re;
+				}
 				n++;
 			}
 			ft_colouring(fractol, n, x, y);
@@ -100,41 +78,16 @@ void mandelbrot_algo(t_fractol *fractol)
 	}
 }
 
-/* handling arrow keys & escape button movements */
-void ft_escape_key(void* param)
+t_cpx	*initialization_cpx(double real, double imag)
 {
-	t_fractol	*fractol;
+	t_cpx	*cpx;
 
-	fractol = (t_fractol *) param;
-	if (mlx_is_key_down(fractol->window, MLX_KEY_ESCAPE))
-		mlx_close_window(fractol->window);
-}
-
-/* responsible for converting the mouse coordinates (x and y) to 
-complex number coordinates based on the window dimensions and the zoom value*/
-t_cpx	*from_mlx_to_complex(double x, double y, t_fractol *fractol)
-{
-	t_cpx	*num;
-
-	num = malloc (sizeof(t_cpx));
-	if (num == NULL)
+	cpx = malloc (sizeof(t_cpx));
+	if (cpx == NULL)
 		return (NULL);
-	num->real = (-1 + 2 * (x / WIDTH)) * WIDTH / HEIGHT * fractol->zoom->value;
-	num->imag = (1 - 2 * (y / HEIGHT)) * fractol->zoom->value;
-	return (num);
-}
-
-//! change for Julia real + imag
-t_cpx	*initialize_complex(double real, double imag)
-{
-	t_cpx	*compl;
-
-	compl = malloc (sizeof(t_cpx));
-	if (compl == NULL)
-		return (NULL);
-	compl->real = real;
-	compl->imag = imag;
-	return (compl);
+	cpx->real = real;
+	cpx->imag = imag;
+	return (cpx);
 }
 
 //! add extra if function for Julia
@@ -146,15 +99,15 @@ int	create_set(double x, double y, t_fractol *fractol)
 
 	if (fractol->mandelbrot == 1)
 	{
-		c = from_mlx_to_complex(x, y, fractol);
+		c = complex_n_conversion(x, y, fractol);
 		c = move_fractol(c, fractol);
-		z = initialize_complex(0, 0);
+		z = initialization_cpx(0, 0);
 	}
 	else
 	{
-		z = from_mlx_to_complex(x, y, fractol);
+		z = complex_n_conversion(x, y, fractol);
 		z = move_fractol(z, fractol);
-		c = initialize_complex(fractol->julia_r,
+		c = initialization_cpx(fractol->julia_r,
 				fractol->julia_i);
 	}
 	iterations = check_stability(z, c);
@@ -251,11 +204,8 @@ int main(int ac, char **av)
 	}
 	else if (ac == 4) //!needs an additional check if parameters are valid!
 	{
-		fractol->julia = 1;
 		fractol->julia_r = atof(av[2]); //! take my own atoi
-		//printf("%f", fractol->julia_r);
 		fractol->julia_i = atof(av[3]);
-		//printf("%f", fractol->julia_i);
 		fractol = initialize_fractol(fractol);
 			if (fractol == NULL)
 				return (EXIT_FAILURE);

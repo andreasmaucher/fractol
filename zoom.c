@@ -43,7 +43,7 @@ void	store_cursor_position(t_fractol *fractol, t_point *cursor)
 {
 	free(cursor->pos);
 	mlx_get_mouse_pos(fractol->window, &(cursor->x), &(cursor->y));
-	cursor->pos = from_mlx_to_complex(cursor->x, cursor->y, fractol); 
+	cursor->pos = complex_n_conversion(cursor->x, cursor->y, fractol); 
 }
 
 //! do I need to make changes here for Julia?!

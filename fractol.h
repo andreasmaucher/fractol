@@ -35,11 +35,11 @@
 
 #define START 2
 
-typedef struct s_complex
+/* typedef struct s_complex
 {
 	double	real;
 	double	imag;
-}	        t_cpx;
+}	        t_cpx; */
 
 struct color 
 {
@@ -84,14 +84,14 @@ typedef struct s_fractol
 	t_zoom		*zoom;
 	t_cursor	*cursor;
 	int			mandelbrot;
-	int			julia;
 	double			julia_i;
 	double			julia_r;
+	double	real;
+	double	imag;
 }			t_fractol;
 
 void	zoom_hook(double xdelta, double ydelta, void *param);
-void ft_escape_key(void* param);
-t_cpx	*initialize_complex(double real, double imag);
+t_cpx	*initialization_cpx(double real, double imag);
 t_zoom	*initialize_zoom(double value, double shift, bool type);
 t_cursor	*initialize_cursor(void);
 t_point	*initialize_point(double real, double imag);
@@ -103,10 +103,14 @@ int	check_stability(t_cpx *z, t_cpx *c);
 void	zoom_hook(double xdelta, double ydelta, void *param);
 
 /*math*/
-t_cpx	*from_mlx_to_complex(double x, double y, t_fractol *fractol);
+t_cpx	*complex_n_conversion(double x, double y, t_fractol *fractol);
 
 /*color*/
 void	color_fractol(t_fractol *fractol);
+int32_t ft_pixel(int32_t r, int32_t g, int32_t b, int32_t a);
+void	ft_colouring(t_fractol *fractol, unsigned n, unsigned x, unsigned y);
 
+/*utils*/
+void ft_escape_key(void* param);
 
 #endif

@@ -11,7 +11,7 @@
 # **************************************************************************** #
 
 NAME = fractol
-SOURCES = main.c zoom.c initialization.c
+SOURCES = main.c zoom.c initialization.c color.c utils.c math.c
 //FT_PRINTF = ft_printf/ft_printf.a
 //LIBFT = libft/libft.a
 MLX42 = MLX42/build/libmlx42.a
