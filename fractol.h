@@ -26,7 +26,7 @@
 #define WIDTH 1920
 #define HEIGHT 980
 
-#define ITERATIONS 142 //142 is good, 420 also works
+#define ITERATIONS 142
 #define ZOOM_FACTOR 0.69
 
 /* parameters for zooming in and out */
@@ -56,7 +56,6 @@ typedef struct s_fractol
 {
 	mlx_t		*window;
 	mlx_image_t	*image;
-	t_cpx		*origin;
 	t_cursor	*cursor;
 	int			mandelbrot;
 	double			julia_i;

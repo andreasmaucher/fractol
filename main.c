@@ -12,71 +12,74 @@
 
 #include "fractol.h"
 
-/* MinRe, MaxRe: defining the min & max values for the real & imaginary parts
+/* //! if too many declarations to refactor in this loop
+void	mandelbrot_x_loop(t_fractol *fractol, unsigned y, double c_im, double MaxIm)
+{
+	double Re_factor;
+	unsigned n;
+	double c_re;
+	double Z_re;
+	double Z_im;
+	unsigned x;
+
+	Re_factor = (1.5 - -4.2) / (WIDTH - 1);
+	x = 0;
+	while (x < WIDTH)
+	{
+		c_re = -4.2 + x * Re_factor;
+		Z_re = c_re;
+		Z_im = c_im;
+		n = 0;
+		while(n < ITERATIONS)  //after this loop we get value between 0 and max iter
+		{
+			double Z_re2; //a*a
+			double Z_im2; //b*b
+			Z_re2 = Z_re*Z_re; //a*a
+			Z_im2 = Z_im*Z_im;
+			if(Z_re2 + Z_im2 > 4)
+				break;
+			if (fractol->mandelbrot != 1)
+			{
+				Z_im = 2*Z_re*Z_im + fractol->julia_i; //c_im
+				Z_re = Z_re2 - Z_im2 + fractol->julia_r; //c_re
+			}
+			else
+			{
+				Z_im = 2*Z_re*Z_im + c_im;
+				Z_re = Z_re2 - Z_im2 + c_re;
+			}
+			n++;
+		}
+		ft_colouring(fractol, n, x, y);
+		++x;
+	}
+}
+
+MinRe, MaxRe: defining the min & max values for the real & imaginary parts
 , MinIm, MaxIm: defining boundaries, MaxIm is calculated based on the screen ratio, to avoid
 image distortion when the display window isn't a square
 Re_factor & Im_factor: used to map screen coordinates to complex numbers, calculated
 by dividing the lenght of the rectangle with the screen width, this is
-essentially to calculate the step size between consectutive pixels  */
-void mandelbrot_algo(t_fractol *fractol)
+essentially to calculate the step size between consectutive pixels  
+MaxIm = MinIm + (MaxRe-MinRe) * HEIGHT / WIDTH;
+
+void mandelbrot_y_loop(t_fractol *fractol)
 {
-	double MinRe;
-	double MaxRe;
-	double MinIm;
 	double MaxIm;
-	double Re_factor;
-	double Im_factor;
-	unsigned n;
+	double c_im;
 	unsigned y;
-	unsigned x;
+	double Im_factor;
 
-	MinRe = -4.2;
-	MaxRe = 1.5;
-	MinIm = -1.5;
-	MaxIm = MinIm + (MaxRe-MinRe) * HEIGHT / WIDTH;
-	Re_factor = (MaxRe-MinRe) / (WIDTH - 1);
-	Im_factor = (MaxIm - MinIm) / (HEIGHT - 1);
-	n = 0;
+	MaxIm = -1.5 + (1.5 - -4.2) * HEIGHT / WIDTH;
+	Im_factor = (MaxIm - -1.5) / (HEIGHT - 1);
 	y = 0;
-
 	while (y < HEIGHT)
 	{
-		double c_im = MaxIm - y*Im_factor;
-		x = 0;
-		while (x < WIDTH)
-		{
-			double c_re;
-			c_re = MinRe + x*Re_factor;
-			double Z_re;
-			Z_re = c_re;
-			double Z_im = c_im;
-			n = 0;
-			while(n < ITERATIONS)  //after this loop we get value between 0 and max iter
-			{
-				double Z_re2; //a*a
-				Z_re2 = Z_re*Z_re; //a*a
-				double Z_im2; //b*b
-				Z_im2 = Z_im*Z_im;
-				if(Z_re2 + Z_im2 > 4)
-					break;
-				if (fractol->mandelbrot != 1)
-				{
-					Z_im = 2*Z_re*Z_im + fractol->julia_i; //c_im
-					Z_re = Z_re2 - Z_im2 + fractol->julia_r; //c_re
-				}
-				else
-				{
-					Z_im = 2*Z_re*Z_im + c_im;
-					Z_re = Z_re2 - Z_im2 + c_re;
-				}
-				n++;
-			}
-			ft_colouring(fractol, n, x, y);
-			++x;
-		}
+		c_im = MaxIm - y*Im_factor;
+		mandelbrot_x_loop(fractol, y, c_im, MaxIm);
 		++y;
 	}
-}
+} */
 
 int	create_fractol(double x, double y, t_fractol *fractol)
 {
@@ -156,7 +159,8 @@ static	t_fractol	*initialize_fractol(t_fractol *fractol)//double x, double y
 	fractol->value = 1;
 	fractol->shift = 0;
 	fractol->type = 2;
-	mandelbrot_algo(fractol);
+	//mandelbrot_y_loop(fractol);
+	color_fractol(fractol);
 	setup_hooks(fractol);
 	return (fractol);
 }
