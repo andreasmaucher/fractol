@@ -88,4 +88,12 @@ void	ft_colouring(t_fractol *fractol, unsigned n, unsigned x, unsigned y);
 /*utils*/
 void ft_escape_key(void* param);
 
+/*input check*/
+double	calc_fractional_part(char *str);
+double string_to_float(char *str);
+double	check_if_num(char *str);
+
+/*ft_split*/
+char	**ft_split(char const *s, char c);
+
 #endif

@@ -11,14 +11,14 @@
 # **************************************************************************** #
 
 NAME = fractol
-SOURCES = main.c zoom.c initialization.c color.c utils.c math.c
+SOURCES = main.c zoom.c initialization.c color.c utils.c math.c input_check.c ft_split.c
 //FT_PRINTF = ft_printf/ft_printf.a
 //LIBFT = libft/libft.a
 MLX42 = MLX42/build/libmlx42.a
 OBJS = $(SOURCES:.c=.o)
 INCLUDES = -I ft_printf/includes -I libft/includes -I MLX42/include
 
-CC = cc
+CC = cc -g
 RM = rm -f
 CFLAGS = -Wall -Wextra -Werror
 MLXFLAGS = -ldl -lglfw -pthread -lm

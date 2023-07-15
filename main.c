@@ -12,75 +12,6 @@
 
 #include "fractol.h"
 
-/* //! if too many declarations to refactor in this loop
-void	mandelbrot_x_loop(t_fractol *fractol, unsigned y, double c_im, double MaxIm)
-{
-	double Re_factor;
-	unsigned n;
-	double c_re;
-	double Z_re;
-	double Z_im;
-	unsigned x;
-
-	Re_factor = (1.5 - -4.2) / (WIDTH - 1);
-	x = 0;
-	while (x < WIDTH)
-	{
-		c_re = -4.2 + x * Re_factor;
-		Z_re = c_re;
-		Z_im = c_im;
-		n = 0;
-		while(n < ITERATIONS)  //after this loop we get value between 0 and max iter
-		{
-			double Z_re2; //a*a
-			double Z_im2; //b*b
-			Z_re2 = Z_re*Z_re; //a*a
-			Z_im2 = Z_im*Z_im;
-			if(Z_re2 + Z_im2 > 4)
-				break;
-			if (fractol->mandelbrot != 1)
-			{
-				Z_im = 2*Z_re*Z_im + fractol->julia_i; //c_im
-				Z_re = Z_re2 - Z_im2 + fractol->julia_r; //c_re
-			}
-			else
-			{
-				Z_im = 2*Z_re*Z_im + c_im;
-				Z_re = Z_re2 - Z_im2 + c_re;
-			}
-			n++;
-		}
-		ft_colouring(fractol, n, x, y);
-		++x;
-	}
-}
-
-MinRe, MaxRe: defining the min & max values for the real & imaginary parts
-, MinIm, MaxIm: defining boundaries, MaxIm is calculated based on the screen ratio, to avoid
-image distortion when the display window isn't a square
-Re_factor & Im_factor: used to map screen coordinates to complex numbers, calculated
-by dividing the lenght of the rectangle with the screen width, this is
-essentially to calculate the step size between consectutive pixels  
-MaxIm = MinIm + (MaxRe-MinRe) * HEIGHT / WIDTH;
-
-void mandelbrot_y_loop(t_fractol *fractol)
-{
-	double MaxIm;
-	double c_im;
-	unsigned y;
-	double Im_factor;
-
-	MaxIm = -1.5 + (1.5 - -4.2) * HEIGHT / WIDTH;
-	Im_factor = (MaxIm - -1.5) / (HEIGHT - 1);
-	y = 0;
-	while (y < HEIGHT)
-	{
-		c_im = MaxIm - y*Im_factor;
-		mandelbrot_x_loop(fractol, y, c_im, MaxIm);
-		++y;
-	}
-} */
-
 int	create_fractol(double x, double y, t_fractol *fractol)
 {
 	t_cpx	*z;
@@ -159,14 +90,14 @@ static	t_fractol	*initialize_fractol(t_fractol *fractol)//double x, double y
 	fractol->value = 1;
 	fractol->shift = 0;
 	fractol->type = 2;
-	//mandelbrot_y_loop(fractol);
 	color_fractol(fractol);
 	setup_hooks(fractol);
 	return (fractol);
 }
 
 //typedef void (*mlx_resizefunc)(int32_t width, int32_t height, void* param);
-//void mlx_resize_hook(mlx_t* mlx, mlx_resizefunc func, void* param);
+//void mlx_resize_hook(mlx_t* mlx, mlx_resizefunc func, void* param)
+
 
 int main(int ac, char **av)
 {
@@ -177,7 +108,7 @@ int main(int ac, char **av)
 			return (0);
 	if (ac == 2)
 	{
-		if (strncmp(av[1], "Mandelbrot", 10) == 0 || strncmp(av[1], "mandelbrot", 10) == 0) // || av[2] == "mandelbrot")
+		if (strncmp(av[1], "Mandelbrot", 10) == 0 || strncmp(av[1], "mandelbrot", 10) == 0)
 		{
 			fractol->mandelbrot = 1;
 			fractol = initialize_fractol(fractol);
@@ -185,18 +116,30 @@ int main(int ac, char **av)
 				return (EXIT_FAILURE);
 		}
 	}
-	else if (ac == 4) //!needs an additional check if parameters are valid!
+	else if (ac == 4) //!need my own strncmp!!!
 	{
-		fractol->julia_r = atof(av[2]); //! take my own atoi
-		fractol->julia_i = atof(av[3]);
-		fractol = initialize_fractol(fractol);
-			if (fractol == NULL)
+		if (strncmp(av[1], "Julia", 5) == 0 || strncmp(av[1], "julia", 5) == 0)
+		{
+			printf("CHECK1");
+			printf("%d", check_if_num(av[2]) == 0);
+			if (check_if_num(av[2]) && check_if_num(av[3]))
+			{
+				printf("CHECK2");
+				fractol->julia_r = string_to_float(av[2]);
+				fractol->julia_i = string_to_float(av[3]);
+				fractol = initialize_fractol(fractol);
+			}
+			else
 				return (EXIT_FAILURE);
+			/* if (fractol == NULL)
+				return (EXIT_FAILURE); */
+		}
 	}
 	/* else
 		{
 			input_instructions();
 			return (EXIT_FAILURE);
 		} */
-	return (EXIT_SUCCESS); //can I leave it here?!
+	free(fractol);
+	return (EXIT_SUCCESS);
 }
