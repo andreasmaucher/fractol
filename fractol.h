@@ -21,13 +21,14 @@
 #include <stddef.h>
 #include <string.h>
 #include "./MLX42/include/MLX42/MLX42.h"
+#include "./ft_printf/ft_printf.h"
 
 /* defines the size of the window */
 #define WIDTH 1920
 #define HEIGHT 980
 
 #define ITERATIONS 142
-#define ZOOM_FACTOR 0.69
+#define ZOOM_FACTOR 0.9
 
 /* parameters for zooming in and out */
 #define IN 0
@@ -70,6 +71,10 @@ t_cpx	*initialization_cpx(double real, double imag);
 t_fractol	*initialize_zoom(double value, double shift, bool type);
 t_cursor	*initialize_cursor(void);
 t_point	*initialize_point(double real, double imag);
+t_fractol	*setup_julia(t_fractol *fractol, char *set_name, char *x, char *y);
+t_fractol	*setup_mandelbrot(t_fractol *fractol, char *set_name);
+//static	t_fractol	*initialize_fractol(t_fractol *fractol);
+int	input_instructions();
 
 /*zoom*/
 t_cpx	*zoom_fractol(t_cpx *num, t_fractol *fractol);
@@ -79,14 +84,17 @@ void	zoom_hook(double xdelta, double ydelta, void *param);
 
 /*math*/
 t_cpx	*complex_n_conversion(double x, double y, t_fractol *fractol);
+int	create_fractol(double x, double y, t_fractol *fractol);
 
 /*color*/
 void	color_fractol(t_fractol *fractol);
 int32_t ft_pixel(int32_t r, int32_t g, int32_t b, int32_t a);
 void	ft_colouring(t_fractol *fractol, unsigned n, unsigned x, unsigned y);
+uint32_t	color_set(double x, double y, t_fractol *fractol);
 
 /*utils*/
 void ft_escape_key(void* param);
+int	ft_strncmp(const char *s1, const char *s2, size_t n);
 
 /*input check*/
 double	calc_fractional_part(char *str);

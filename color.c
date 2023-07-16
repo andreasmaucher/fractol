@@ -29,3 +29,36 @@ void	ft_colouring(t_fractol *fractol, unsigned n, unsigned x, unsigned y)
 	else 
 		mlx_put_pixel(fractol->image, x, y, ft_pixel(0, 0, 0, 42));
 }
+
+uint32_t	color_set(double x, double y, t_fractol *fractol)
+{
+	int			iter;
+	uint32_t	color;
+
+	iter = create_fractol(x, y, fractol);
+	if (iter < ITERATIONS)
+		color = ft_pixel(iter * 42, iter * 84, iter * 21, 84);
+	else
+		color = ft_pixel(0, 0, 0, 58);
+	return (color);
+}
+
+void	color_fractol(t_fractol *fractol)
+{
+	int				x;
+	int				y;
+	uint32_t		color;
+
+	x = 0;
+	while (x < WIDTH)
+	{
+		y = 0;
+		while (y < HEIGHT)
+		{
+			color = color_set(x, y, fractol);
+			mlx_put_pixel(fractol->image, x, y, color);
+			y++;
+		}
+		x++;
+	}
+}

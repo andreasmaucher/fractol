@@ -12,64 +12,6 @@
 
 #include "fractol.h"
 
-int	create_fractol(double x, double y, t_fractol *fractol)
-{
-	t_cpx	*z;
-	t_cpx	*c;
-	int			iterations;
-
-	if (fractol->mandelbrot == 1)
-	{
-		c = complex_n_conversion(x, y, fractol);
-		c = zoom_fractol(c, fractol);
-		z = initialization_cpx(0, 0);
-	}
-	else
-	{
-		z = complex_n_conversion(x, y, fractol);
-		z = zoom_fractol(z, fractol);
-		c = initialization_cpx(fractol->julia_r,
-				fractol->julia_i);
-	}
-	iterations = check_stability(z, c);
-	//free(z); //!neded?!?!?
-	//free(c);
-	return (iterations);
-}
-
-uint32_t	color_set(double x, double y, t_fractol *fractol)
-{
-	int			iter;
-	uint32_t	color;
-
-	iter = create_fractol(x, y, fractol);
-	if (iter < ITERATIONS)
-		color = ft_pixel(iter * 42, iter * 84, iter * 21, 84);
-	else
-		color = ft_pixel(0, 0, 0, 58);
-	return (color);
-}
-
-void	color_fractol(t_fractol *fractol)
-{
-	int				x;
-	int				y;
-	uint32_t		color;
-
-	x = 0;
-	while (x < WIDTH)
-	{
-		y = 0;
-		while (y < HEIGHT)
-		{
-			color = color_set(x, y, fractol);
-			mlx_put_pixel(fractol->image, x, y, color);
-			y++;
-		}
-		x++;
-	}
-}
-
 static	t_fractol	*setup_hooks(t_fractol *fractol)
 {
 	mlx_scroll_hook(fractol->window, &zoom_hook, fractol); //!ZOOM
@@ -98,48 +40,57 @@ static	t_fractol	*initialize_fractol(t_fractol *fractol)//double x, double y
 //typedef void (*mlx_resizefunc)(int32_t width, int32_t height, void* param);
 //void mlx_resize_hook(mlx_t* mlx, mlx_resizefunc func, void* param)
 
+t_fractol	*setup_mandelbrot(t_fractol *fractol, char *set_name)
+{
+	if (strncmp(set_name, "Mandelbrot", 10) == 0 || strncmp(set_name, "mandelbrot", 10) == 0)
+	{
+		fractol->mandelbrot = 1;
+		fractol = initialize_fractol(fractol);
+		if (fractol == NULL)
+			input_instructions();
+	}
+	else 
+		input_instructions();
+	return (fractol);
+}
 
-int main(int ac, char **av)
+t_fractol	*setup_julia(t_fractol *fractol, char *set_name, char *x, char *y)
+{
+	if (ft_strncmp(set_name, "Julia", 5) == 0 || ft_strncmp(set_name, "julia", 5) == 0)
+	{
+		if (x[ft_strlen(x)-1] == '.' || y[ft_strlen(y)-1] == '.')
+			input_instructions();
+		else if (check_if_num(x) && check_if_num(y))
+		{
+			fractol->julia_r = string_to_float(x);
+			fractol->julia_i = string_to_float(y);
+			fractol = initialize_fractol(fractol);
+		}
+		else
+			input_instructions();
+	}
+	return (fractol);
+}
+
+int	main(int ac, char **av)
 {
 	t_fractol	*fractol;
+	char		*set_name;
+	char		*x;
+	char		*y;
 
+	set_name = av[1];
+	x = av[2];
+	y = av[3];
 	fractol = malloc (sizeof(t_fractol));
-		if (fractol == 0)
-			return (0);
+	if (fractol == 0)
+		return (0);
 	if (ac == 2)
-	{
-		if (strncmp(av[1], "Mandelbrot", 10) == 0 || strncmp(av[1], "mandelbrot", 10) == 0)
-		{
-			fractol->mandelbrot = 1;
-			fractol = initialize_fractol(fractol);
-			if (fractol == NULL)
-				return (EXIT_FAILURE);
-		}
-	}
-	else if (ac == 4) //!need my own strncmp!!!
-	{
-		if (strncmp(av[1], "Julia", 5) == 0 || strncmp(av[1], "julia", 5) == 0)
-		{
-			printf("CHECK1");
-			printf("%d", check_if_num(av[2]) == 0);
-			if (check_if_num(av[2]) && check_if_num(av[3]))
-			{
-				printf("CHECK2");
-				fractol->julia_r = string_to_float(av[2]);
-				fractol->julia_i = string_to_float(av[3]);
-				fractol = initialize_fractol(fractol);
-			}
-			else
-				return (EXIT_FAILURE);
-			/* if (fractol == NULL)
-				return (EXIT_FAILURE); */
-		}
-	}
-	/* else
-		{
-			input_instructions();
-			return (EXIT_FAILURE);
-		} */
+		setup_mandelbrot(fractol, set_name);
+	else if (ac == 4)
+		setup_julia(fractol, set_name, x, y);
+	else
+		return(input_instructions());
 	free(fractol);
 	return (EXIT_SUCCESS);
 }

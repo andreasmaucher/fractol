@@ -12,11 +12,10 @@
 
 NAME = fractol
 SOURCES = main.c zoom.c initialization.c color.c utils.c math.c input_check.c ft_split.c
-//FT_PRINTF = ft_printf/ft_printf.a
-//LIBFT = libft/libft.a
+FT_PRINTF = ft_printf/ft_printf.a
 MLX42 = MLX42/build/libmlx42.a
 OBJS = $(SOURCES:.c=.o)
-INCLUDES = -I ft_printf/includes -I libft/includes -I MLX42/include
+INCLUDES = -I ft_printf/includes -I MLX42/include
 
 CC = cc -g
 RM = rm -f
@@ -25,16 +24,21 @@ MLXFLAGS = -ldl -lglfw -pthread -lm
 
 all: $(NAME)	
 
-$(NAME): $(MLX42) $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) $(MLX42) $(MLXFLAGS) $(INCLUDES) -o $(NAME)
+$(NAME): $(FT_PRINTF) $(MLX42) $(OBJS)
+	$(CC) $(CFLAGS) $(OBJS) $(FT_PRINTF) $(MLX42) $(MLXFLAGS) $(INCLUDES) -o $(NAME)
+
+$(FT_PRINTF):
+	make -C ft_printf
 
 $(MLX42):
 	make -C MLX42
 
 clean:
+	make -C ft_printf clean
 	$(RM) $(OBJS)
 
 fclean: clean
+	make -C ft_printf clean
 	$(RM) $(NAME)
 
 re: fclean $(NAME)
