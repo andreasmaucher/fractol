@@ -37,9 +37,10 @@ int	ft_strncmp(const char *s1, const char *s2, size_t n)
 	return (0);
 }
 
-int	input_instructions()
+int	input_instructions(t_fractol *fractol)
 {
 	ft_printf("Valid set names are 'Mandelbrot' or 'Julia'. \n");
 	ft_printf("For Julia sets add coordinates as follows: 'Julia -0.42 0.69'");
+	free(fractol);
 	return (EXIT_FAILURE);
 }

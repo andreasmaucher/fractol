@@ -35,7 +35,6 @@ t_point	*initialize_point(double real, double imag)
 	return (point);
 }
 
-//? why (0,0) -> because it"s only initialization and values are set later
 t_cursor	*initialize_cursor(void)
 {
 	t_cursor		*cursor;

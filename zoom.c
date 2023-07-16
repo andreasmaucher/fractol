@@ -34,10 +34,9 @@ t_cpx	*zoom_fractol(t_cpx *num, t_fractol *fractol)
 	return (num);
 }
 
-//check what happens if mouse is outside of the window
-//passing the address of the cursor variable to allow the mlx function
-//to modify the value directly at the memory location
-/* responsible for updating the cursor position based on the mouse 
+/* passing the address of the cursor variable to allow the mlx function
+to modify the value directly at the memory location;
+responsible for updating the cursor position based on the mouse 
 coordinates retrieved from the mlx_get_mouse_pos function*/
 void	store_cursor_position(t_fractol *fractol, t_point *cursor)
 {
@@ -46,10 +45,9 @@ void	store_cursor_position(t_fractol *fractol, t_point *cursor)
 	cursor->pos = complex_n_conversion(cursor->x, cursor->y, fractol); 
 }
 
-//! do I need to make changes here for Julia?!
 int	check_stability(t_cpx *z, t_cpx *c)
 {
-	t_cpx	*tmp;
+	t_cpx		*tmp;
 	int			i;
 
 	tmp = malloc (sizeof(t_cpx));
@@ -96,6 +94,5 @@ void	zoom_hook(double xdelta, double ydelta, void *param)
 		fractol->shift = (fractol->shift - 1) / ZOOM_FACTOR;
 	}
 	store_cursor_position(fractol, fractol->cursor->after_zoom);
-	color_fractol(fractol); //! I need to exchange this loop with mine!
-	//mandelbrot_algo(fractol); //! this should just colour it
+	color_fractol(fractol);
 }
