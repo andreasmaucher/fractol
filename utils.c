@@ -43,3 +43,22 @@ int	input_instructions()
 	ft_printf("For Julia sets add coordinates as follows: 'Julia -0.42 0.69'");
 	return (EXIT_FAILURE);
 }
+
+void	free_point(t_point *point)
+{
+	free(point->pos);
+	free(point);
+}
+
+void	free_cursor(t_cursor *cursor)
+{
+	free_point(cursor->before_zoom);
+	free_point(cursor->after_zoom);
+	free(cursor);
+}
+
+void	free_memory(t_fractol *fractol)
+{
+	free_cursor(fractol->cursor);
+	free(fractol);
+}

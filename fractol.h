@@ -95,6 +95,7 @@ uint32_t	color_set(double x, double y, t_fractol *fractol);
 /*utils*/
 void ft_escape_key(void* param);
 int	ft_strncmp(const char *s1, const char *s2, size_t n);
+void	free_memory(t_fractol *fractol);
 
 /*input check*/
 double	calc_fractional_part(char *str);

@@ -104,5 +104,6 @@ double	check_if_num(char *str)
 		if (ft_isdigit(split_str[0]) && ft_isdigit(split_str[1]))
 			return(1);
 	}
+	free(split_str);
 	return (0);
 }

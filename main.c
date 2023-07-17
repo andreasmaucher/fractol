@@ -35,6 +35,9 @@ static	t_fractol	*initialize_fractol(char *set_name, char *x, char *y)
 	fractol = malloc(sizeof(t_fractol));
 	if (fractol == NULL)
 		return (NULL);
+	fractol->window = mlx_init(WIDTH, HEIGHT, "fractol", true);
+	fractol->image = mlx_new_image(fractol->window, WIDTH, HEIGHT);
+	fractol->cursor = initialize_cursor();
 	if (ft_strncmp(set_name, "Mandelbrot", 10) == 0 || ft_strncmp(set_name, "mandelbrot", 10) == 0)
 		{
 			fractol->mandelbrot = 1;
@@ -45,20 +48,17 @@ static	t_fractol	*initialize_fractol(char *set_name, char *x, char *y)
 		}
 	else
 		{
-			fractol->mandelbrot = 1;
+			fractol->mandelbrot = 0;
 			fractol->julia_r = string_to_float(x);
 			fractol->julia_i = string_to_float(y);
 		}
-	fractol->window = mlx_init(WIDTH, HEIGHT, "fractol", true);
-	fractol->image = mlx_new_image(fractol->window, WIDTH, HEIGHT);
-	mlx_image_to_window(fractol->window, fractol->image, 0, 0);
-	fractol->cursor = initialize_cursor();
 	fractol->value = 1;
 	fractol->shift = 0;
 	fractol->type = 2;
+	mlx_image_to_window(fractol->window, fractol->image, 0, 0);
 	color_fractol(fractol);
 	setup_hooks(fractol);
-	//free_memory(fractol);
+	free_memory(fractol);
 	return (fractol);
 }
 
@@ -94,8 +94,8 @@ int	main(int ac, char **av)
 	set_name = av[1];
 	if (ac == 2)
 	{
-		x = 0;
-		y = 0;
+		x = NULL;
+		y = NULL;
 		setup_mandelbrot(set_name, x, y);
 	}
 	else if (ac == 4)
