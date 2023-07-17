@@ -71,10 +71,10 @@ t_cpx	*initialization_cpx(double real, double imag);
 t_fractol	*initialize_zoom(double value, double shift, bool type);
 t_cursor	*initialize_cursor(void);
 t_point	*initialize_point(double real, double imag);
-t_fractol	*setup_julia(t_fractol *fractol, char *set_name, char *x, char *y);
-t_fractol	*setup_mandelbrot(t_fractol *fractol, char *set_name);
+void	setup_julia(char *set_name, char *x, char *y);
+void	setup_mandelbrot(char *set_name, char *x, char *y);
 //static	t_fractol	*initialize_fractol(t_fractol *fractol);
-int	input_instructions(t_fractol *fractol);
+int	input_instructions();
 
 /*zoom*/
 t_cpx	*zoom_fractol(t_cpx *num, t_fractol *fractol);

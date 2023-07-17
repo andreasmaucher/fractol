@@ -28,8 +28,18 @@ static	t_fractol	*setup_hooks(t_fractol *fractol)
 }
 
 //! error check mlx functions
-static	t_fractol	*initialize_fractol(t_fractol *fractol)
+static	t_fractol	*initialize_fractol(char *set_name, char *x, char *y)
 {
+	t_fractol *fractol;
+
+	fractol = malloc(sizeof(t_fractol));
+	if (fractol == NULL)
+		return (NULL);
+	if (strncmp(set_name, "Mandelbrot", 10) == 0
+		|| strncmp(set_name, "mandelbrot", 10) == 0)
+	fractol->mandelbrot = 1;
+	else
+		fractol->mandelbrot = 0;
 	fractol->window = mlx_init(WIDTH, HEIGHT, "fractol", true);
 	fractol->image = mlx_new_image(fractol->window, WIDTH, HEIGHT);
 	mlx_image_to_window(fractol->window, fractol->image, 0, 0);
@@ -37,49 +47,41 @@ static	t_fractol	*initialize_fractol(t_fractol *fractol)
 	fractol->value = 1;
 	fractol->shift = 0;
 	fractol->type = 2;
+	fractol->julia_r = string_to_float(x);
+	fractol->julia_i = string_to_float(y);
 	color_fractol(fractol);
 	setup_hooks(fractol);
 	return (fractol);
 }
 
-t_fractol	*setup_mandelbrot(t_fractol *fractol, char *set_name)
+void	setup_mandelbrot(char *set_name, char *x, char *y)
 {
 	if (strncmp(set_name, "Mandelbrot", 10) == 0
 		|| strncmp(set_name, "mandelbrot", 10) == 0)
-	{
-		fractol->mandelbrot = 1;
-		fractol = initialize_fractol(fractol);
-		if (fractol == NULL)
-			input_instructions(fractol);
-	}
+		initialize_fractol(set_name, x, y);
 	else
-		input_instructions(fractol);
-	return (fractol);
+		input_instructions();
 }
 
-t_fractol	*setup_julia(t_fractol *fractol, char *set_name, char *x, char *y)
+void	setup_julia(char *set_name, char *x, char *y)
 {
 	if (ft_strncmp(set_name, "Julia", 5) == 0
 		|| ft_strncmp(set_name, "julia", 5) == 0)
 	{
 		if (x[ft_strlen(x) - 1] == '.' || y[ft_strlen(y) - 1] == '.')
-			input_instructions(fractol);
+			input_instructions();
 
 		else if (check_if_num(x) && check_if_num(y))
 		{
-			fractol->julia_r = string_to_float(x);
-			fractol->julia_i = string_to_float(y);
-			fractol = initialize_fractol(fractol);
+			initialize_fractol(set_name, x, y);
 		}
 		else
-			input_instructions(fractol);
+			input_instructions();
 	}
-	return (fractol);
 }
 
 int	main(int ac, char **av)
 {
-	t_fractol	*fractol;
 	char		*set_name;
 	char		*x;
 	char		*y;
@@ -87,15 +89,19 @@ int	main(int ac, char **av)
 	set_name = av[1];
 	x = av[2];
 	y = av[3];
-	fractol = malloc (sizeof(t_fractol));
-	if (fractol == 0)
-		return (0);
 	if (ac == 2)
-		setup_mandelbrot(fractol, set_name);
+	{
+		(void)x;
+		(void)y;
+		setup_mandelbrot(set_name, x, y);
+	}
 	else if (ac == 4)
-		setup_julia(fractol, set_name, x, y);
+	{
+		x = av[2];
+		y = av[3];
+		setup_julia(set_name, x, y);
+	}
 	else
-		return (input_instructions(fractol));
-	free(fractol);
+		return (input_instructions());
 	return (EXIT_SUCCESS);
 }

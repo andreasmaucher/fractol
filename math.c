@@ -47,7 +47,7 @@ int	create_fractol(double x, double y, t_fractol *fractol)
 				fractol->julia_i);
 	}
 	iterations = check_stability(z, c);
-	//free(z); //!neded?!?!?
-	//free(c);
+	free(z);
+	free(c);
 	return (iterations);
 }
