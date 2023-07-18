@@ -12,6 +12,7 @@
 
 #include "fractol.h"
 
+/*setting up all hooks and loops provided by the MLX42 library*/
 static	t_fractol	*setup_hooks(t_fractol *fractol)
 {
 	mlx_scroll_hook(fractol->window, &zoom_hook, fractol);
@@ -21,7 +22,9 @@ static	t_fractol	*setup_hooks(t_fractol *fractol)
 	return (fractol);
 }
 
-static	t_fractol	*initialize_fractol(char *set_name, char *x, char *y)
+/*initializes the fractol struct and calls all functions necessary to
+generate the fractol and finally free the memory*/
+static	t_fractol	*generate_fractol(char *set_name, char *x, char *y)
 {
 	t_fractol	*fractol;
 
@@ -40,15 +43,17 @@ static	t_fractol	*initialize_fractol(char *set_name, char *x, char *y)
 	return (fractol);
 }
 
+/*error checks the input string*/
 void	setup_mandelbrot(char *set_name, char *x, char *y)
 {
 	if (ft_strncmp(set_name, "Mandelbrot", 10) == 0
 		|| ft_strncmp(set_name, "mandelbrot", 10) == 0)
-		initialize_fractol(set_name, x, y);
+		generate_fractol(set_name, x, y);
 	else
 		input_instructions();
 }
 
+/*error checks the input string*/
 void	setup_julia(char *set_name, char *x, char *y)
 {
 	if (ft_strncmp(set_name, "Julia", 5) == 0
@@ -57,7 +62,7 @@ void	setup_julia(char *set_name, char *x, char *y)
 		if (x[ft_strlen(x) - 1] == '.' || y[ft_strlen(y) - 1] == '.')
 			input_instructions();
 		else if (check_if_num(x) && check_if_num(y))
-			initialize_fractol(set_name, x, y);
+			generate_fractol(set_name, x, y);
 		else
 			input_instructions();
 	}

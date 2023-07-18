@@ -40,7 +40,6 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 
 /*we want to move forward in the string until we reach the first 
 non-splitting character */
-
 static size_t	ft_wordcount(char const *s, char c)
 {
 	size_t	count;
@@ -64,7 +63,6 @@ static size_t	ft_wordcount(char const *s, char c)
 
 /* for each string delimited by c an array gets filled 
  char *ft_substr(char const *s, unsigned int start, size_t len) */
-
 static void	filling_array(char **arr, size_t len_arr, char const *s, char c)
 {
 	size_t	i;

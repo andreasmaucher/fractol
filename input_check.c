@@ -12,6 +12,8 @@
 
 #include "fractol.h"
 
+/*calculating the fractional part of a float; used as a helper function for 
+the string_to_float function below*/
 double	calc_fractional_part(char *str)
 {
 	double	fractional_result;
@@ -29,6 +31,7 @@ double	calc_fractional_part(char *str)
 	return (fractional_result);
 }
 
+/*converting the complex coordinates in the input strings into floats*/
 double	string_to_float(char *str)
 {
 	double	result;
@@ -58,6 +61,7 @@ double	string_to_float(char *str)
 	return (result);
 }
 
+/*executed in case the given input coordinates are not floats*/
 int	ft_isdigit(char *str)
 {
 	int	i;
@@ -74,7 +78,8 @@ int	ft_isdigit(char *str)
 	return (1);
 }
 
-int	is_char_in_str(char *str, char c)
+/*check if string is a float determined by '.'*/
+int	check_if_str_is_float(char *str, char c)
 {
 	int	i;
 
@@ -96,7 +101,7 @@ double	check_if_num(char *str)
 	char	dot;
 
 	dot = '.';
-	if (!is_char_in_str(str, dot))
+	if (!check_if_str_is_float(str, dot))
 		return (ft_isdigit(str));
 	else
 	{

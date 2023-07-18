@@ -27,19 +27,26 @@
 # define WIDTH 1920
 # define HEIGHT 980
 
+/*iterations determine the level of detail and complexity and refer to
+ the number of times a specific mathematical operation is repeated to 
+ generate the fractal pattern*/
 # define ITERATIONS 142
-# define ZOOM_FACTOR 0.9
+
+/* the closer to 1 the more granular zoom */
+# define ZOOM_FACTOR 0.69
 
 /* parameters for zooming in and out */
 # define IN 0
 # define OUT 1
 
+/*struct for complex numbers*/
 typedef struct s_complex
 {
 	double	real;
 	double	imag;
 }	t_cpx;
 
+/*struct that determines the position of a certain point on the window*/
 typedef struct s_point
 {
 	int32_t		x;
@@ -47,12 +54,14 @@ typedef struct s_point
 	t_cpx		*pos;
 }	t_point;
 
+/*struct used to store the position of the cursor*/
 typedef struct s_cursor
 {
 	t_point	*before_zoom;
 	t_point	*after_zoom;
 }	t_cursor;
 
+/*value, type & shift are used for zoom*/
 typedef struct s_fractol
 {
 	mlx_t		*window;
@@ -66,17 +75,14 @@ typedef struct s_fractol
 	double		shift;
 }	t_fractol;
 
-void		zoom_hook(double xdelta, double ydelta, void *param);
+/*initialization*/
 t_cpx		*initialization_cpx(double real, double imag);
 t_fractol	*initialize_zoom(double value, double shift, bool type);
 t_cursor	*initialize_cursor(void);
 t_point		*initialize_point(double real, double imag);
-void		setup_julia(char *set_name, char *x, char *y);
-void		setup_mandelbrot(char *set_name, char *x, char *y);
 void		set_specific_initialization(t_fractol *fractol, char *set_name,
 				char *x, char *y);
 int			initialize_mlx(t_fractol *fractol);
-int			input_instructions(void);
 
 /*zoom*/
 t_cpx		*zoom_fractol(t_cpx *num, t_fractol *fractol);
@@ -91,14 +97,13 @@ int			create_fractol(double x, double y, t_fractol *fractol);
 /*color*/
 void		color_fractol(t_fractol *fractol);
 int32_t		ft_pixel(int32_t r, int32_t g, int32_t b, int32_t a);
-int			ft_colouring(t_fractol *fractol, unsigned n, unsigned x,
-				unsigned y);
 uint32_t	color_set(double x, double y, t_fractol *fractol);
 
 /*utils*/
 void		ft_escape_key(void *param);
 int			ft_strncmp(const char *s1, const char *s2, size_t n);
 void		free_memory(t_fractol *fractol);
+int			input_instructions(void);
 
 /*input check*/
 double		calc_fractional_part(char *str);

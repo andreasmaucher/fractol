@@ -12,6 +12,7 @@
 
 #include "fractol.h"
 
+/*zoom calculating the diff_x or diff_y to determine if zoom is in or out*/
 t_cpx	*zoom_fractol(t_cpx *num, t_fractol *fractol)
 {
 	double	diff_x;
@@ -45,6 +46,8 @@ void	store_cursor_position(t_fractol *fractol, t_point *cursor)
 	cursor->pos = complex_n_conversion(cursor->x, cursor->y, fractol); 
 }
 
+/*mandelbrot math determining determine the stability of a complex number
+ sequence during iterations */
 int	check_stability(t_cpx *z, t_cpx *c)
 {
 	t_cpx		*tmp;

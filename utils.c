@@ -37,6 +37,7 @@ int	ft_strncmp(const char *s1, const char *s2, size_t n)
 	return (0);
 }
 
+/*input instructions displayed to the user in case of wrong input*/
 int	input_instructions(void)
 {
 	ft_printf("Valid set names are 'Mandelbrot' or 'Julia'. \n");

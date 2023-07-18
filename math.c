@@ -27,6 +27,8 @@ t_cpx	*complex_n_conversion(double x, double y, t_fractol *fractol)
 	return (n);
 }
 
+//! more explanation
+/*this is where all the magic happens*/
 int	create_fractol(double x, double y, t_fractol *fractol)
 {
 	t_cpx		*z;

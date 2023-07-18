@@ -17,23 +17,9 @@ int32_t	ft_pixel(int32_t r, int32_t g, int32_t b, int32_t a)
 	return (r << 24 | g << 16 | b << 8 | a);
 }
 
-int	ft_colouring(t_fractol *fractol, unsigned n, unsigned x, unsigned y)
-{
-	uint32_t	color;
-
-	if (n < ITERATIONS)
-	{
-		color = ft_pixel(n * 42, n * 84, n * 21, 84);
-		mlx_put_pixel(fractol->image, x, y, color);
-		return (0);
-	}
-	else 
-	{
-		mlx_put_pixel(fractol->image, x, y, ft_pixel(0, 0, 0, 42));
-		return (0);
-	}
-}
-
+/*The function color_set calculates the number of iterations required for the
+ given point to escape a certain threshold using the create_fractol function,
+ and based on the number of iterations, assigns a color to the point*/
 uint32_t	color_set(double x, double y, t_fractol *fractol)
 {
 	int			iter;
@@ -47,6 +33,7 @@ uint32_t	color_set(double x, double y, t_fractol *fractol)
 	return (color);
 }
 
+/*coloring each pixel by iterating on the x & y axis*/
 void	color_fractol(t_fractol *fractol)
 {
 	int				x;

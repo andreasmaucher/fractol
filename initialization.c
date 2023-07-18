@@ -47,6 +47,8 @@ t_cursor	*initialize_cursor(void)
 	return (cursor);
 }
 
+/*different initialization of the fractol struct depending if we want to
+generate the Mandelbrot or Julia Set*/
 void	set_specific_initialization(t_fractol *fractol, char *set_name,
 		char *x, char *y)
 {
@@ -67,6 +69,8 @@ void	set_specific_initialization(t_fractol *fractol, char *set_name,
 	}
 }
 
+/*initializing & error checking the creation of the image & window using
+MLX42 functions*/
 int	initialize_mlx(t_fractol *fractol)
 {
 	fractol->window = mlx_init(WIDTH, HEIGHT, "fractol", true);
