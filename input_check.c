@@ -14,52 +14,52 @@
 
 double	calc_fractional_part(char *str)
 {
-	double fractional_result;
-    double multiplier;
+	double	fractional_result;
+	double	multiplier;
 
 	fractional_result = 0;
 	multiplier = 0.1;
 	str++;
 	while (*str >= '0' && *str <= '9')
-    {
-        fractional_result = fractional_result + (*str - '0') * multiplier;
-        multiplier /= 10.0;
-        str++;
-    }
+	{
+		fractional_result = fractional_result + (*str - '0') * multiplier;
+		multiplier /= 10.0;
+		str++;
+	}
 	return (fractional_result);
 }
 
-double string_to_float(char *str)
+double	string_to_float(char *str)
 {
-	double result;
-    double sign;
-	double fractional_result;
+	double	result;
+	double	sign;
+	double	fractional_result;
 
 	sign = 1;
 	result = 0;
-    while (*str == ' ' || *str == '\t')
-        str++;
-    if (*str == '-')
-    {
-        sign = -1.0;
-        str++;
-    }
-    else if (*str == '+')
-        str++;
-    while (*str >= '0' && *str <= '9')
-    {
-        result = result * 10.0 + (*str - '0');
-        str++;
-    }
+	while (*str == ' ' || *str == '\t')
+		str++;
+	if (*str == '-')
+	{
+		sign = -1.0;
+		str++;
+	}
+	else if (*str == '+')
+		str++;
+	while (*str >= '0' && *str <= '9')
+	{
+		result = result * 10.0 + (*str - '0');
+		str++;
+	}
 	fractional_result = 0;
-    if (*str == '.')
-        fractional_result = calc_fractional_part(str);
-    result = (result + fractional_result) * sign;
-    return result;
+	if (*str == '.')
+		fractional_result = calc_fractional_part(str);
+	result = (result + fractional_result) * sign;
+	return (result);
 }
 
 int	ft_isdigit(char *str)
-{	
+{
 	int	i;
 
 	i = 0;
@@ -88,8 +88,8 @@ int	is_char_in_str(char *str, char c)
 	return (0);
 }
 
-//first check if dot, if yes split it up and check both strings
-//if no, check the whole string for numbers
+/* first check if float number, if yes split up the string, if no
+check both strings */
 double	check_if_num(char *str)
 {
 	char	**split_str;
@@ -102,8 +102,7 @@ double	check_if_num(char *str)
 	{
 		split_str = ft_split(str, dot);
 		if (ft_isdigit(split_str[0]) && ft_isdigit(split_str[1]))
-			return(1);
+			return (1);
 	}
-	free(split_str);
 	return (0);
 }

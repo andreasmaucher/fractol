@@ -46,3 +46,47 @@ t_cursor	*initialize_cursor(void)
 	cursor->after_zoom = initialize_point(0, 0);
 	return (cursor);
 }
+
+void	set_specific_initialization(t_fractol *fractol, char *set_name,
+		char *x, char *y)
+{
+	if (ft_strncmp(set_name, "Mandelbrot", 10) == 0 
+		|| ft_strncmp(set_name, "mandelbrot", 10) == 0)
+	{
+		fractol->mandelbrot = 1;
+		(void)x;
+		(void)y;
+		fractol->julia_r = 0;
+		fractol->julia_i = 0;
+	}
+	else
+	{
+		fractol->mandelbrot = 0;
+		fractol->julia_r = string_to_float(x);
+		fractol->julia_i = string_to_float(y);
+	}
+}
+
+int	initialize_mlx(t_fractol *fractol)
+{
+	fractol->window = mlx_init(WIDTH, HEIGHT, "fractol", true);
+	if (!(fractol->window))
+	{
+		puts(mlx_strerror(mlx_errno));
+		return (EXIT_FAILURE);
+	}
+	fractol->image = mlx_new_image(fractol->window, WIDTH, HEIGHT);
+	if (!(fractol->image))
+	{
+		mlx_close_window(fractol->window);
+		puts(mlx_strerror(mlx_errno));
+		return (EXIT_FAILURE);
+	}
+	if (mlx_image_to_window(fractol->window, fractol->image, 0, 0) == -1)
+	{
+		mlx_close_window(fractol->window);
+		puts(mlx_strerror(mlx_errno));
+		return (EXIT_FAILURE);
+	}
+	return (0);
+}

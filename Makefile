@@ -11,7 +11,8 @@
 # **************************************************************************** #
 
 NAME = fractol
-SOURCES = main.c zoom.c initialization.c color.c utils.c math.c input_check.c ft_split.c
+SOURCES = main.c zoom.c initialization.c color.c utils.c math.c input_check.c \
+			ft_split.c memory_management.c
 FT_PRINTF = ft_printf/ft_printf.a
 MLX42 = MLX42/build/libmlx42.a
 OBJS = $(SOURCES:.c=.o)

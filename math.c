@@ -29,8 +29,8 @@ t_cpx	*complex_n_conversion(double x, double y, t_fractol *fractol)
 
 int	create_fractol(double x, double y, t_fractol *fractol)
 {
-	t_cpx	*z;
-	t_cpx	*c;
+	t_cpx		*z;
+	t_cpx		*c;
 	int			iterations;
 
 	if (fractol->mandelbrot == 1)

@@ -17,7 +17,7 @@ int32_t	ft_pixel(int32_t r, int32_t g, int32_t b, int32_t a)
 	return (r << 24 | g << 16 | b << 8 | a);
 }
 
-void	ft_colouring(t_fractol *fractol, unsigned n, unsigned x, unsigned y)
+int	ft_colouring(t_fractol *fractol, unsigned n, unsigned x, unsigned y)
 {
 	uint32_t	color;
 
@@ -25,9 +25,13 @@ void	ft_colouring(t_fractol *fractol, unsigned n, unsigned x, unsigned y)
 	{
 		color = ft_pixel(n * 42, n * 84, n * 21, 84);
 		mlx_put_pixel(fractol->image, x, y, color);
+		return (0);
 	}
 	else 
+	{
 		mlx_put_pixel(fractol->image, x, y, ft_pixel(0, 0, 0, 42));
+		return (0);
+	}
 }
 
 uint32_t	color_set(double x, double y, t_fractol *fractol)
