@@ -30,3 +30,16 @@ void	free_memory(t_fractol *fractol)
 	free_cursor(fractol->cursor);
 	free(fractol);
 }
+
+void	free_split_str(char **split_str)
+{
+	int		i;
+
+	i = 0;
+	while (split_str[i])
+	{
+		free(split_str[i]);
+		i++;
+	}
+	free(split_str);
+}

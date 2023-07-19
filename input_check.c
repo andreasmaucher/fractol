@@ -107,7 +107,11 @@ double	check_if_num(char *str)
 	{
 		split_str = ft_split(str, dot);
 		if (ft_isdigit(split_str[0]) && ft_isdigit(split_str[1]))
+		{
+			free_split_str(split_str);
 			return (1);
+		}
 	}
+	free_split_str(split_str);
 	return (0);
 }

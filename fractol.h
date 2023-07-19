@@ -104,6 +104,7 @@ void		ft_escape_key(void *param);
 int			ft_strncmp(const char *s1, const char *s2, size_t n);
 void		free_memory(t_fractol *fractol);
 int			input_instructions(void);
+void		free_split_str(char **split_str);
 
 /*input check*/
 double		calc_fractional_part(char *str);

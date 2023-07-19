@@ -18,6 +18,7 @@ static	t_fractol	*setup_hooks(t_fractol *fractol)
 	mlx_scroll_hook(fractol->window, &zoom_hook, fractol);
 	mlx_loop_hook(fractol->window, ft_escape_key, fractol);
 	mlx_loop(fractol->window);
+	//mlx_delete_image(fractol->window, fractol->image);
 	mlx_terminate(fractol->window);
 	return (fractol);
 }
