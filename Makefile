@@ -31,12 +31,18 @@ $(NAME): $(FT_PRINTF) $(MLX42) $(OBJS)
 $(FT_PRINTF):
 	make -C ft_printf
 
+MLXDIR = MLX42/
+
 $(MLX42):
-	make -C MLX42
+	if [ ! -d "MLX42" ]; then git clone https://github.com/codam-coding-college/MLX42.git; fi
+	cmake $(MLXDIR) -B $(MLXDIR)build && cmake --build $(MLXDIR)build -j8
 
 clean:
 	make -C ft_printf clean
 	$(RM) $(OBJS)
+
+cleanlibs:
+	rm -rf $(MLXDIR)
 
 fclean: clean
 	make -C ft_printf clean
