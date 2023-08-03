@@ -22,15 +22,15 @@ t_cpx	*zoom_fractol(t_cpx *num, t_fractol *fractol)
 		- fractol->cursor->before_zoom->pos->real;
 	diff_y = fractol->cursor->after_zoom->pos->imag
 		- fractol->cursor->before_zoom->pos->imag;
-	if (fractol->type == IN)
+	if (fractol->zoom_in_out == IN)
 	{
-		num->real = num->real + (ZOOM_FACTOR * fractol->shift) * diff_x;
-		num->imag = num->imag + (ZOOM_FACTOR * fractol->shift) * diff_y;
+		num->real = num->real + (ZOOM_FACTOR * fractol->zoom_centered) * diff_x;
+		num->imag = num->imag + (ZOOM_FACTOR * fractol->zoom_centered) * diff_y;
 	}
-	else if (fractol->type == OUT)
+	else if (fractol->zoom_in_out == OUT)
 	{
-		num->real = num->real - fractol->shift * diff_x;
-		num->imag = num->imag - fractol->shift * diff_y;
+		num->real = num->real - fractol->zoom_centered * diff_x;
+		num->imag = num->imag - fractol->zoom_centered * diff_y;
 	}
 	return (num);
 }
@@ -86,15 +86,15 @@ void	zoom_hook(double xdelta, double ydelta, void *param)
 	store_cursor_position(fractol, fractol->cursor->before_zoom);
 	if (ydelta > 0)
 	{
-		fractol->type = OUT;
-		fractol->value = fractol->value / ZOOM_FACTOR;
-		fractol->shift = 1 + fractol->shift * ZOOM_FACTOR;
+		fractol->zoom_in_out = OUT;
+		fractol->zoom_level = fractol->zoom_level / ZOOM_FACTOR;
+		fractol->zoom_centered = 1 + fractol->zoom_centered * ZOOM_FACTOR;
 	}
 	else if (ydelta < 0)
 	{
-		fractol->type = IN;
-		fractol->value = fractol->value * ZOOM_FACTOR;
-		fractol->shift = (fractol->shift - 1) / ZOOM_FACTOR;
+		fractol->zoom_in_out = IN;
+		fractol->zoom_level = fractol->zoom_level * ZOOM_FACTOR;
+		fractol->zoom_centered = (fractol->zoom_centered - 1) / ZOOM_FACTOR;
 	}
 	store_cursor_position(fractol, fractol->cursor->after_zoom);
 	color_fractol(fractol);

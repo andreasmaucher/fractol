@@ -18,11 +18,12 @@ static	t_fractol	*setup_hooks(t_fractol *fractol)
 	mlx_scroll_hook(fractol->window, &zoom_hook, fractol);
 	mlx_loop_hook(fractol->window, ft_escape_key, fractol);
 	mlx_loop(fractol->window);
-	//mlx_delete_image(fractol->window, fractol->image);
 	mlx_terminate(fractol->window);
 	return (fractol);
 }
 
+//! WHY STATIC
+//! WHY VALUE SHIFT TYPE
 /*initializes the fractol struct and calls all functions necessary to
 generate the fractol and finally free the memory*/
 static	t_fractol	*generate_fractol(char *set_name, char *x, char *y)
@@ -35,13 +36,13 @@ static	t_fractol	*generate_fractol(char *set_name, char *x, char *y)
 	initialize_mlx(fractol);
 	fractol->cursor = initialize_cursor();
 	set_specific_initialization(fractol, set_name, x, y);
-	fractol->value = 1;
-	fractol->shift = 0;
-	fractol->type = 2;
+	fractol->zoom_level = 1;
+	fractol->zoom_centered = 0;
+	fractol->zoom_in_out = 2;
 	color_fractol(fractol);
 	setup_hooks(fractol);
 	free_memory(fractol);
-	return (fractol);
+	return (0);
 }
 
 /*error checks the input string*/

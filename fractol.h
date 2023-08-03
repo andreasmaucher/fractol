@@ -70,9 +70,9 @@ typedef struct s_fractol
 	int			mandelbrot;
 	double		julia_i;
 	double		julia_r;
-	double		value;
-	bool		type;
-	double		shift;
+	double		zoom_level;
+	bool		zoom_in_out;
+	double		zoom_centered;
 }	t_fractol;
 
 /*initialization*/
