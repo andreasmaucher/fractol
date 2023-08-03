@@ -46,7 +46,7 @@ void	store_cursor_position(t_fractol *fractol, t_point *cursor)
 	cursor->pos = complex_n_conversion(cursor->x, cursor->y, fractol); 
 }
 
-/*mandelbrot math determining determine the stability of a complex number
+/*mandelbrot math determining the stability of a complex number
  sequence during iterations */
 int	check_stability(t_cpx *z, t_cpx *c)
 {

@@ -27,8 +27,13 @@ t_cpx	*complex_n_conversion(double x, double y, t_fractol *fractol)
 	return (n);
 }
 
-//! more explanation
-/*this is where all the magic happens*/
+/*this is where all the magic happens; c and z are calculated and the final
+image generation is achieved by calculating the stability of those complex
+numbers;
+Mandelbrot: each pixel corresponds to a unique c; z is first initialized with
+real & imaginary parts set to 0.
+Julia Set: c is set to a fixed value and remains the same for the entire
+ time */
 int	create_fractol(double x, double y, t_fractol *fractol)
 {
 	t_cpx		*z;

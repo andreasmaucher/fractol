@@ -22,8 +22,6 @@ static	t_fractol	*setup_hooks(t_fractol *fractol)
 	return (fractol);
 }
 
-//! WHY STATIC
-//! WHY VALUE SHIFT TYPE
 /*initializes the fractol struct and calls all functions necessary to
 generate the fractol and finally free the memory*/
 static	t_fractol	*generate_fractol(char *set_name, char *x, char *y)
